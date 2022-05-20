@@ -8,6 +8,9 @@ import jakarta.persistence.PersistenceUnit;
 
 import java.io.Serializable;
 
+/**
+ *
+ */
 @PersistenceUnit
 @Stateless
 public class CategoryStore implements Serializable {

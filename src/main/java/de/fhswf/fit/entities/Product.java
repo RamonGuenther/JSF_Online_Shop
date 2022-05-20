@@ -3,7 +3,9 @@ package de.fhswf.fit.entities;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,10 +19,8 @@ public class Product implements Serializable {
 
     private double price;
 
-
-
     @ManyToMany(cascade = CascadeType.PERSIST)
-    private Set<Image> imageList;
+    private List<Image> imageList;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     private Set<Category> categoryList;
@@ -36,7 +36,7 @@ public class Product implements Serializable {
         this.inStock = inStock;
         this.description = description;
         categoryList = new HashSet<>();
-        imageList = new HashSet<>();
+        imageList = new ArrayList<>();
     }
 
     public Product() {
@@ -67,7 +67,7 @@ public class Product implements Serializable {
         return description;
     }
 
-    public Set<Image> getImageList() {
+    public List<Image> getImageList() {
         return imageList;
     }
 
@@ -91,7 +91,7 @@ public class Product implements Serializable {
         this.description = description;
     }
 
-    public void setImageList(Set<Image> imageList) {
+    public void setImageList(List<Image> imageList) {
         this.imageList = imageList;
     }
 
@@ -101,5 +101,9 @@ public class Product implements Serializable {
 
     public void addCategory(Category category){
         categoryList.add(category);
+    }
+
+    public String getFirstImage(){
+        return imageList.get(0).getName();
     }
 }

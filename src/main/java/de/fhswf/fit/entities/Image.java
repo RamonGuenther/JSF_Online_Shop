@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import org.primefaces.shaded.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -57,9 +58,13 @@ public class Image implements Serializable {
         this.imageType = imageType;
     }
 
-    public void setData(String imageFile){
+
+    public void setData(String imageFile) {
 //        try {
-//            data = IOUtils.toByteArray(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("images/" + imageFile)));
+//            InputStream is = getClass().getResourceAsStream("/images/" + imageFile);
+//            System.out.println("/images/"+imageFile);
+//            data = IOUtils.toByteArray(is);
+//
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }

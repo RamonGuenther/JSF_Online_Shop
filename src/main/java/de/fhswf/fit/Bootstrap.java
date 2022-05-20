@@ -12,6 +12,11 @@ import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
 import jakarta.inject.Inject;
 
+/**
+ * TODO: - Bilder speichern
+ *       - Nach Name und Id suchen
+ *       - Nach Kategorie suchen
+ */
 @Startup
 @Singleton
 public class Bootstrap {
@@ -62,12 +67,35 @@ public class Bootstrap {
         smartphone1.addCategory(categoryTechnik);
         Image imageSmartphone1_1 = new Image("01_s21ultra.jpeg", ImageType.JPEG);
         imageSmartphone1_1.setData("01_s21ultra.jpeg");
+
         smartphone1.addImage(imageSmartphone1_1);
         Image imageSmartphone1_2 = new Image("02_s21ultra.jpeg", ImageType.JPEG);
         imageSmartphone1_2.setData("02_s21ultra.jpeg");
         smartphone1.addImage(imageSmartphone1_2);
 
         productStore.save(smartphone1);
+
+        Product smartphone2 = new Product("Iphone 13 ProMax", 1829.00, 8, "1TB purer Spaß");
+        smartphone2.addCategory(categorySmartphone);
+        smartphone2.addCategory(categoryTechnik);
+        Image imageSmartphone2_1 = new Image("03_iphone13promax.png", ImageType.JPEG);
+        imageSmartphone2_1.setData("03_iphone13promax.png");
+        smartphone2.addImage(imageSmartphone2_1);
+        Image imageSmartphone2_2 = new Image("04_iphone13promax.png", ImageType.JPEG);
+        imageSmartphone2_2.setData("04_iphone13promax.png");
+        smartphone2.addImage(imageSmartphone2_2);
+        productStore.save(smartphone2);
+//
+        Product playstation = new Product("Playstation 5", 879.00, 1, "Standard Edition, 825 GB interner Speicher");
+        playstation.addCategory(categoryKonsolen);
+        playstation.addCategory(categoryTechnik);
+        Image imagePlaystation_1 = new Image("05_playstation5.jpeg", ImageType.JPEG);
+        imagePlaystation_1.setData("05_playstation5.jpeg");
+        playstation.addImage(imagePlaystation_1);
+        Image imagePlaystation_2 = new Image("06_playstation5.jpeg", ImageType.JPEG);
+        imagePlaystation_2.setData("06_playstation5.jpeg");
+        playstation.addImage(imagePlaystation_2);
+        productStore.save(playstation);
 
 
     }
