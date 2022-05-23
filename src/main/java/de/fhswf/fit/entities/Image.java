@@ -1,15 +1,14 @@
 package de.fhswf.fit.entities;
 
 import de.fhswf.fit.entities.enums.ImageType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.annotation.Resource;
+import jakarta.persistence.*;
 import org.primefaces.shaded.commons.io.IOUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +20,7 @@ public class Image implements Serializable {
 
     private String name;
 
+    @Lob
     private byte[] data;
 
     private ImageType imageType;
@@ -60,13 +60,6 @@ public class Image implements Serializable {
 
 
     public void setData(String imageFile) {
-//        try {
-//            InputStream is = getClass().getResourceAsStream("/images/" + imageFile);
-//            System.out.println("/images/"+imageFile);
-//            data = IOUtils.toByteArray(is);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+
     }
 }

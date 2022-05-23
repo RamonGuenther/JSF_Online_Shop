@@ -14,8 +14,6 @@ import jakarta.inject.Inject;
 
 /**
  * TODO: - Bilder speichern
- *       - Nach Name und Id suchen
- *       - Nach Kategorie suchen
  */
 @Startup
 @Singleton
@@ -27,6 +25,11 @@ public class Bootstrap {
     @Inject
     private CategoryStore categoryStore;
 
+    /**
+     * TODO: ALS NÄCHSTES TESTDATEN FERTIG MACHEN UND PRÜFEN
+     *          - User -> Address Untersuchen ob das wirklich so Sinn macht weil in HEidi jz bei Adresse die Userid steht wegen joincolumn doer ob ich doch nur OneToMany Lasse
+     *          - Aufgabenblatt 7 nochmal anschauen wegen UC's
+     */
     @PostConstruct
     public void init(){
         System.out.println("POST CONSTRUCT");
@@ -62,7 +65,7 @@ public class Bootstrap {
         System.out.println("Kategorien wurden in der Datenbank gespeichert");
 
 
-        Product smartphone1 = new Product("Samsung Galaxy S21 Ultra 5G", 1299.00, 10, "Krasses Handy");
+        Product smartphone1 = new Product("Samsung Galaxy S21 Ultra 5G", 1299.00, 10, "Krasses Handy", CategoryType.SMARTPHONES);
         smartphone1.addCategory(categorySmartphone);
         smartphone1.addCategory(categoryTechnik);
         Image imageSmartphone1_1 = new Image("01_s21ultra.jpeg", ImageType.JPEG);
@@ -75,7 +78,7 @@ public class Bootstrap {
 
         productStore.save(smartphone1);
 
-        Product smartphone2 = new Product("Iphone 13 ProMax", 1829.00, 8, "1TB purer Spaß");
+        Product smartphone2 = new Product("Iphone 13 ProMax", 1829.00, 8, "1TB purer Spaß", CategoryType.SMARTPHONES);
         smartphone2.addCategory(categorySmartphone);
         smartphone2.addCategory(categoryTechnik);
         Image imageSmartphone2_1 = new Image("03_iphone13promax.png", ImageType.JPEG);
@@ -86,7 +89,7 @@ public class Bootstrap {
         smartphone2.addImage(imageSmartphone2_2);
         productStore.save(smartphone2);
 //
-        Product playstation = new Product("Playstation 5", 879.00, 1, "Standard Edition, 825 GB interner Speicher");
+        Product playstation = new Product("Playstation 5", 879.00, 1, "Standard Edition, 825 GB interner Speicher", CategoryType.KONSOLEN);
         playstation.addCategory(categoryKonsolen);
         playstation.addCategory(categoryTechnik);
         Image imagePlaystation_1 = new Image("05_playstation5.jpeg", ImageType.JPEG);

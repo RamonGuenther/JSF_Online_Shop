@@ -1,49 +1,50 @@
 package de.fhswf.fit.entities;
 
+import de.fhswf.fit.entities.enums.CategoryType;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Product implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String name;
 
     private double price;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Image> imageList;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Set<Category> categoryList;
+
+    private CategoryType mainCategory;
 
     private int inStock;
 
     private String description;
 
 
-    public Product(String name, double price, int inStock, String description) {
+    public Product(String name, double price, int inStock, String description, CategoryType mainCategory) {
         this.name = name;
         this.price = price;
         this.inStock = inStock;
         this.description = description;
+        this.mainCategory = mainCategory;
         categoryList = new HashSet<>();
         imageList = new ArrayList<>();
+        id = UUID.randomUUID().toString();
     }
 
     public Product() {
 
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -95,15 +96,25 @@ public class Product implements Serializable {
         this.imageList = imageList;
     }
 
-    public void addImage(Image image){
+    public void addImage(Image image) {
         imageList.add(image);
     }
 
-    public void addCategory(Category category){
+    public void addCategory(Category category) {
         categoryList.add(category);
     }
 
-    public String getFirstImage(){
+    public String getFirstImage() {
         return imageList.get(0).getName();
     }
+
+    public CategoryType getMainCategory() {
+        return mainCategory;
+    }
+
+    public void setMainCategory(CategoryType mainCategory) {
+        this.mainCategory = mainCategory;
+    }
 }
+
+

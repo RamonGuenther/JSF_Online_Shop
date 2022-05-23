@@ -10,8 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@SessionScoped
 @Named("productService")
+@SessionScoped
 public class ProductService implements Serializable {
 
     private Product product;
@@ -26,10 +26,15 @@ public class ProductService implements Serializable {
         productList = new ArrayList<>();
     }
 
+    private void init(){
+        productList.addAll(productStore.getAll());
+    }
+
 
     @Inject
     public void setProductStore(ProductStore productStore){
         this.productStore = productStore;
+        init();
     }
 
     public Product getProduct() {
@@ -41,7 +46,6 @@ public class ProductService implements Serializable {
     }
 
     public List<Product> getProductList() {
-        productList = productStore.getAll();
         return productList;
     }
 
