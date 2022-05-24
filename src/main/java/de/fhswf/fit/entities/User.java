@@ -3,6 +3,7 @@ package de.fhswf.fit.entities;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,20 +13,24 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    private String username;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private List<Address> addressList;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private List<Ordering> orderingList;
 
-
-    public User(List<Address> addressList) {
-        this.addressList = addressList;
+    public User(String username) {
+        this.username = username;
+        addressList = new ArrayList<>();
+        orderingList = new ArrayList<>();
     }
 
     public User() {
+
     }
 
     public Long getId() {
@@ -46,5 +51,21 @@ public class User implements Serializable {
 
     public void setOrderingList(List<Ordering> orderingList) {
         this.orderingList = orderingList;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void addAddress(Address newAddress){
+        addressList.add(newAddress);
+    }
+
+    public void addOrder(Ordering newOrder){
+        orderingList.add(newOrder);
     }
 }

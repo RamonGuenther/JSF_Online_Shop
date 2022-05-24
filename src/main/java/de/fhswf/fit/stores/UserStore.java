@@ -1,6 +1,7 @@
 package de.fhswf.fit.stores;
 
 import de.fhswf.fit.entities.Product;
+import de.fhswf.fit.entities.User;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -15,28 +16,26 @@ import java.util.List;
 
 @PersistenceUnit
 @Stateless
-public class ProductStore implements Serializable {
+public class UserStore implements Serializable {
+
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Product> getAll() {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Product> cq = cb.createQuery(Product.class);
-        Root<Product> root = cq.from(Product.class);
-        cq.select(root);
-        TypedQuery<Product> query = entityManager.createQuery(cq);
+    public List<User> getAll(){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> root = criteriaQuery.from(User.class);
+        criteriaQuery.select(root);
+        TypedQuery<User> query = entityManager.createQuery(criteriaQuery);
+
         return query.getResultList();
     }
-
-    public Product getById(String id) {
-        return entityManager.find(Product.class, id);
+    public void save(User newUser){
+        entityManager.persist(newUser);
     }
 
-    public void save(Product newProduct){
-        entityManager.persist(newProduct);
+    public void update(User user){
+        entityManager.merge(user);
     }
-
-    public void update(Product product){entityManager.merge(product);}
-
 }

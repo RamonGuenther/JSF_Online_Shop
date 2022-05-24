@@ -115,6 +115,11 @@ public class Product implements Serializable {
     public void setMainCategory(CategoryType mainCategory) {
         this.mainCategory = mainCategory;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Product) && name.equals(((Product) o).name);
+    }
 }
 
 

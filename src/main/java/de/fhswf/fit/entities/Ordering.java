@@ -1,8 +1,10 @@
 package de.fhswf.fit.entities;
 
+import de.fhswf.fit.entities.enums.OrderState;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 //Order
@@ -18,18 +20,23 @@ public class Ordering implements Serializable {
     @ManyToOne
     private Address deliveryAddress;
 
-    @OneToMany(mappedBy = "ordering")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ordering", cascade = CascadeType.ALL)
     private List<OrderedProduct> orderedProductList;
 
     private String orderComment;
 
-    public Ordering(Address billingAddress, Address deliveryAddress, List<OrderedProduct> orderedProductList) {
+    private OrderState orderState;
+
+    public Ordering(Address billingAddress, Address deliveryAddress, String orderComment) {
         this.billingAddress = billingAddress;
         this.deliveryAddress = deliveryAddress;
-        this.orderedProductList = orderedProductList;
+        this.orderComment = orderComment;
+        orderedProductList = new ArrayList<>();
+        orderState = OrderState.OFFEN;
     }
 
     public Ordering() {
+
     }
 
     public Long getId() {
@@ -70,5 +77,26 @@ public class Ordering implements Serializable {
 
     public void setOrderComment(String orderComment) {
         this.orderComment = orderComment;
+    }
+
+    public OrderState getOrderState() {
+        return orderState;
+    }
+
+    public void addOrderedProduct(OrderedProduct orderedProduct) {
+
+        for (OrderedProduct op : orderedProductList) {
+            if (op.getProduct().equals(orderedProduct.getProduct())) {
+                System.out.println("Gibt es schon");
+                op.setAmount(op.getAmount() + 1);
+                return;
+            }
+        }
+        System.out.println("Gab es nicht");
+        orderedProductList.add(orderedProduct);
+    }
+
+    public void setOrderStateToOrder() {
+        orderState = OrderState.BESTELLT;
     }
 }

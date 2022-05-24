@@ -1,7 +1,12 @@
 package de.fhswf.fit.services;
 
+import de.fhswf.fit.entities.OrderedProduct;
+import de.fhswf.fit.entities.Ordering;
 import de.fhswf.fit.entities.Product;
+import de.fhswf.fit.entities.User;
+import de.fhswf.fit.stores.OrderStore;
 import de.fhswf.fit.stores.ProductStore;
+import de.fhswf.fit.stores.UserStore;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -9,6 +14,7 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Named("productService")
 @SessionScoped
@@ -27,7 +33,7 @@ public class ProductService implements Serializable {
     }
 
     private void init(){
-        productList.addAll(productStore.getAll());
+        productList.addAll(productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).toList());
     }
 
 
@@ -65,6 +71,7 @@ public class ProductService implements Serializable {
         this.productList = productList;
     }
 
-
-
+    public void refreshProducts(){
+        productList = productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).toList();
+    }
 }
