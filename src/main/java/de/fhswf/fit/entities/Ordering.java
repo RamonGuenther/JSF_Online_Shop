@@ -20,7 +20,7 @@ public class Ordering implements Serializable {
     @ManyToOne
     private Address deliveryAddress;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ordering", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ordering", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<OrderedProduct> orderedProductList;
 
     private String orderComment;

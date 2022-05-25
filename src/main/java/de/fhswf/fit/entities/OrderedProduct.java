@@ -10,12 +10,12 @@ public class OrderedProduct implements Serializable {
     @EmbeddedId
     private OrderedProductKey id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @MapsId("orderingId")
     @JoinColumn(name = "ordering_id")
     private Ordering ordering;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @MapsId("productId")
     @JoinColumn(name = "product_id")
     private Product product;
