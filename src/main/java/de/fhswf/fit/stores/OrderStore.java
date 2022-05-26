@@ -23,4 +23,9 @@ public class OrderStore implements Serializable {
     public void update(Ordering ordering){
         entityManager.merge(ordering);
     }
+
+    public void delete(Ordering ordering) {
+        ordering = entityManager.merge(ordering);
+        entityManager.remove(ordering);
+    }
 }

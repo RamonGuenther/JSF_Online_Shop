@@ -10,6 +10,11 @@ import jakarta.inject.Inject;
 
 /**
  * TODO: - Bilder speichern
+ *          -  Produkt aus Warenkorb löschen
+ *          - Beim editieren inStock beachten und Meldung schicken wenn es nicht passt bzw die Liste der ints der
+ *              number methode anpassen an den verfügbaren
+*              - Adressen bearbeiten auch in Tabelle oder löschen oder Karten wie in dem anderen
+ *              - Wie updatet man eine Tabelle beziehungsweise den Footer
  */
 @Startup
 @Singleton
@@ -241,7 +246,6 @@ public class Bootstrap {
         orderStore.update(order1);
 
         System.out.println(        user.getOrderingList().get(0).getOrderedProductList().size());
-
 
 
 

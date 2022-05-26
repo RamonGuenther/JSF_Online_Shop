@@ -28,21 +28,31 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="address.xhtml">Adressen</a></li>
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="shoppingCart.xhtml">Warenkorb</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="${pageContext.request.contextPath}/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="address.xhtml">Adressen</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="shoppingCart.xhtml">Warenkorb</a></li>
                 </ul>
             </div>
         </div>
     </nav>
     <div class="container">
         <h:form id="form">
+            <p:growl id="msgs" showDetail="true"/>
 
             <h2 class="text-white mt-5">Warenkorb</h2>
 
             <div class="text-light mt-5">
                 <p:dataTable value="#{shoppingCartService.orderedProductList}" var="op" paginator="true" rows="3"
-                             paginatorPosition="bottom" widgetVar="recipeDatatable" reflow="true">
+                             paginatorPosition="bottom" widgetVar="recipeDatatable" reflow="true" editable="true" id="test">
+
+
+                    <p:ajax event="rowEdit" listener="#{shoppingCartService.onRowEdit}" update=":form:msgs">
+                        <f:actionListener binding="#{shoppingCartService.refreshTotalPrice()}"/>
+                    </p:ajax>
+                    <p:ajax event="rowEditCancel" listener="#{shoppingCartService.onRowCancel}" update=":form:msgs"/>
 
                     <f:facet name="header">
                         <div class="products-table-header">
@@ -54,29 +64,53 @@
                         </div>
                     </f:facet>
 
-
                     <p:column headerText="Name" sortBy="#{op.product.name}" filterBy="#{op.product.name}#{r.id}"
                               filterStyle="display:none" width="300">
                         <h:outputText value="#{op.product.name}"/>
                     </p:column>
 
                     <p:column headerText="Produktbild" exportable="false" width="300">
-                        <p:graphicImage url="images/#{op.product.firstImage}" title="#{op.product.firstImage}" width="150" height="200"/>
+                        <p:graphicImage url="images/#{op.product.firstImage}" title="#{op.product.firstImage}"
+                                        width="150"
+                                        height="200"/>
                     </p:column>
 
-                    <p:column headerText="Preis" sortBy="#{op.product.price}">
+                    <p:column headerText="Einzelpreis" sortBy="#{op.product.price}">
                         <h:outputText value="#{op.product.price}€"/>
                     </p:column>
 
-                    <p:column headerText="Bestellmenge" sortBy="#{op.amount}">
-                        <h:outputText value="#{op.amount}"/>
+
+                    <p:column headerText="Bestellmenge">
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{op.amount}"/></f:facet>
+                            <f:facet name="input">
+                                <h:selectOneMenu value="#{op.amount}" style="width:100%">
+                                    <f:selectItems value="#{shoppingCartService.generateNumbers(op)}" var="g" itemValue="#{g}"
+                                                   itemLabel="#{g}"/>
+                                </h:selectOneMenu>
+                            </f:facet>
+                        </p:cellEditor>
                     </p:column>
+
+                    <p:column headerText="Gesamtpreis" sortBy="#{op.product.price}">
+                        <h:outputText value="#{op.product.price*op.amount}€"/>
+                    </p:column>
+
+                    <p:column style="width:6rem">
+                        <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <span class="p-text-bold">Anzahl: #{shoppingCartService.orderedProductList.size()} | Gesamtpreis: #{shoppingCartService.totalPrice}€</span>
+                    </f:facet>
                 </p:dataTable>
 
-                <p:commandButton styleClass="mt-3" value="Bestellen"></p:commandButton> <!--TODO: beimbestellen öffnet sich eine neue Seite oder dialog wo auch die SUmme steht-->
+                <p:commandButton styleClass="mt-3"
+                                 value="Bestellen"></p:commandButton> <!--TODO: beimbestellen öffnet sich eine neue Seite oder dialog wo auch die SUmme steht-->
             </div>
 
         </h:form>
+
     </div>
 </h:body>
 

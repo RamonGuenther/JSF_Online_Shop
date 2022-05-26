@@ -33,7 +33,7 @@ public class ProductService implements Serializable {
     }
 
     private void init(){
-        productList.addAll(productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).toList());
+        productList.addAll(productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).collect(Collectors.toList()));
     }
 
 
@@ -72,6 +72,6 @@ public class ProductService implements Serializable {
     }
 
     public void refreshProducts(){
-        productList = productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).toList();
+        productList = productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).collect(Collectors.toList());
     }
 }
