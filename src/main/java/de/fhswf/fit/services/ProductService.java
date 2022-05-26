@@ -72,6 +72,7 @@ public class ProductService implements Serializable {
     }
 
     public void refreshProducts(){
+        System.out.println("Refresh");
         productList = productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).collect(Collectors.toList());
     }
 }

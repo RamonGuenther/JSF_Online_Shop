@@ -2,6 +2,7 @@ package de.fhswf.fit;
 
 import de.fhswf.fit.entities.*;
 import de.fhswf.fit.entities.enums.*;
+import de.fhswf.fit.stores.OrderedProductStore;
 import de.fhswf.fit.stores.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Singleton;
@@ -22,6 +23,7 @@ public class Bootstrap {
 
     @Inject
     private ProductStore productStore;
+    
 
     @Inject
     private CategoryStore categoryStore;
@@ -31,6 +33,9 @@ public class Bootstrap {
 
     @Inject
     private OrderStore orderStore;
+
+    @Inject
+    private OrderedProductStore orderedProductStore;
 
 
     /**
@@ -69,7 +74,6 @@ public class Bootstrap {
         categoryStore.save(categorySpeichermedien);
 
         System.out.println("Kategorien wurden in der Datenbank gespeichert");
-
 
         Product smartphone1 = new Product("Samsung Galaxy S21 Ultra 5G", 1299.00, 10, "Krasses Handy", CategoryType.SMARTPHONES);
         smartphone1.addCategory(categorySmartphone);
@@ -229,8 +233,9 @@ public class Bootstrap {
         user.addOrder(order1);
         orderStore.save(order1);
 
+       OrderedProduct op = new OrderedProduct(order1, smartphone1,1);
 
-        order1.addOrderedProduct(new OrderedProduct(order1, smartphone1,1));
+        order1.addOrderedProduct(op);
 
         order1.addOrderedProduct( new OrderedProduct(order1, smartphone1,1));
 
@@ -245,10 +250,13 @@ public class Bootstrap {
 
         orderStore.update(order1);
 
-        System.out.println(        user.getOrderingList().get(0).getOrderedProductList().size());
+        System.out.println(user.getOrderingList().get(0).getOrderedProductList().size());
+        System.out.println(order1.getOrderedProductList().size());
 
+        order1.removeOrderedProduct(op);
+        orderedProductStore.delete(op);
 
-
+        orderStore.update(order1);
 
 
 //        //Ein leerer "Warenkorb"

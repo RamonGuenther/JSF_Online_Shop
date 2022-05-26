@@ -46,12 +46,11 @@
 
             <div class="text-light mt-5">
                 <p:dataTable value="#{shoppingCartService.orderedProductList}" var="op" paginator="true" rows="3"
-                             paginatorPosition="bottom" widgetVar="recipeDatatable" reflow="true" editable="true" id="test">
+                             paginatorPosition="bottom" widgetVar="recipeDatatable" reflow="true" editable="true"
+                             id="test">
 
 
-                    <p:ajax event="rowEdit" listener="#{shoppingCartService.onRowEdit}" update=":form:msgs">
-                        <f:actionListener binding="#{shoppingCartService.refreshTotalPrice()}"/>
-                    </p:ajax>
+                    <p:ajax event="rowEdit" listener="#{shoppingCartService.onRowEdit}" update=":form:msgs"/>
                     <p:ajax event="rowEditCancel" listener="#{shoppingCartService.onRowCancel}" update=":form:msgs"/>
 
                     <f:facet name="header">
@@ -85,7 +84,8 @@
                             <f:facet name="output"><h:outputText value="#{op.amount}"/></f:facet>
                             <f:facet name="input">
                                 <h:selectOneMenu value="#{op.amount}" style="width:100%">
-                                    <f:selectItems value="#{shoppingCartService.generateNumbers(op)}" var="g" itemValue="#{g}"
+                                    <f:selectItems value="#{shoppingCartService.generateNumbers(op)}" var="g"
+                                                   itemValue="#{g}"
                                                    itemLabel="#{g}"/>
                                 </h:selectOneMenu>
                             </f:facet>
@@ -100,16 +100,60 @@
                         <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
                     </p:column>
 
+
+                    <p:column headerText="Löschen">
+                        <p:commandButton styleClass="edit-button rounded-button ui-button-danger " title="Löschen"
+                                         icon="pi pi-trash" actionListener="#{shoppingCartService.deleteProduct(op)}"
+                                         action="#{productService.refreshProducts()}" update=":form"/>
+                    </p:column>
+
+
                     <f:facet name="footer">
                         <span class="p-text-bold">Anzahl: #{shoppingCartService.orderedProductList.size()} | Gesamtpreis: #{shoppingCartService.totalPrice}€</span>
                     </f:facet>
+
                 </p:dataTable>
 
-                <p:commandButton styleClass="mt-3"
-                                 value="Bestellen"></p:commandButton> <!--TODO: beimbestellen öffnet sich eine neue Seite oder dialog wo auch die SUmme steht-->
+                <p:commandButton oncomplete="PF('orderDialog').show()"
+                                 styleClass="mt-3"
+                                 value="Bestellen"/> <!--TODO: beimbestellen öffnet sich eine neue Seite oder dialog wo auch die SUmme steht-->
             </div>
 
+            <h:commandButton value="send"/>
+
+
         </h:form>
+
+        <p:dialog styleClass="customDialog" header="Produkt Details" showEffect="fade" widgetVar="orderDialog"
+                  responsive="true" resizable="false" width="600" height="600" closable="true">
+
+            <div class="form-group pt-2">
+                <label for="reptileName">Name</label>
+                <p:inputText value="#{shoppingCartService.order.orderComment}" type="text" name="reptileName"
+                             class="form-control placeholder-wave" id="reptileName" disabled="false"/>
+            </div>
+
+            <div class="form-group pt-2">
+                <label for="reptileType">Lieferadresse</label>
+                <h:selectOneMenu value="#{shoppingCartService.order.deliveryAddress}" class="form-control"
+                                 id="reptileType"
+                                 name="reptileType">
+                    <f:selectItems value="#{shoppingCartService.test()}" var="g" itemValue="#{g}"
+                                   itemLabel="#{g}"/>
+                </h:selectOneMenu>
+
+                <div class="form-group pt-2">
+                    <label for="o">Name</label>
+                    <h:outputText value="#{shoppingCartService.order.deliveryAddress.lastName}" type="text"
+                                  name="reptileName"
+                                  class="form-control placeholder-wave" id="o" disabled="false"/>
+                </div>
+            </div>
+            <!--                        <p:commandButton type="submit" value="Bestätigen" class="btn btn-success mt-3 btn-sm"-->
+            <!--                                         action="#{reptileService.updateReptile(reptileService.selectedReptile)}"-->
+            <!--                                         update=":form"> </p:commandButton>-->
+        </p:dialog>
+
 
     </div>
 </h:body>

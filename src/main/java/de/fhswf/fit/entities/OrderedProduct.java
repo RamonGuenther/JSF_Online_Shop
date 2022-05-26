@@ -63,4 +63,9 @@ public class OrderedProduct implements Serializable {
     public void setAmount(int amount) {
         this.amount = amount;
     }
+
+    @Override //TODO: EY
+    public boolean equals(Object o) {
+        return (o instanceof Product) && getProduct().getId().equals(((Product) o).getId());
+    }
 }

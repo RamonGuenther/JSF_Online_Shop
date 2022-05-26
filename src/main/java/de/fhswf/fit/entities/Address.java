@@ -111,4 +111,9 @@ public class Address implements Serializable {
     public void setMail(String mail) {
         this.mail = mail;
     }
+
+    public String getFullAddress(){
+
+        return address + ", " +postal+" "+ place;
+    }
 }

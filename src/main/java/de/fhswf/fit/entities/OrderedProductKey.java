@@ -11,6 +11,7 @@ public class OrderedProductKey implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String productId;
 
     private Long orderingId;

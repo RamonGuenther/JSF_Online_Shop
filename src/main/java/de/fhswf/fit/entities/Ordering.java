@@ -20,7 +20,7 @@ public class Ordering implements Serializable {
     @ManyToOne
     private Address deliveryAddress;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ordering", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ordering", cascade = {CascadeType.ALL})
     private List<OrderedProduct> orderedProductList;
 
     private String orderComment;
@@ -96,11 +96,22 @@ public class Ordering implements Serializable {
         orderedProductList.add(orderedProduct);
     }
 
-    public void editOrderedProduct(OrderedProduct orderedProduct){
+    public void editOrderedProduct(OrderedProduct orderedProduct) {
         for (OrderedProduct op : orderedProductList) {
             if (op.getProduct().equals(orderedProduct.getProduct())) {
                 System.out.println("Gibt es schon");
                 op.setAmount(orderedProduct.getAmount());
+                return;
+            }
+        }
+    }
+
+    public void removeOrderedProduct(OrderedProduct orderedProduct) {
+
+        for (int i = 0; i < orderedProductList.size(); i++) {
+            if (orderedProductList.get(i).getProduct().getId().equals(orderedProduct.getProduct().getId())) {
+                orderedProductList.remove(i);
+                System.out.println("GEFUNDEN");
                 return;
             }
         }
