@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class User implements Serializable {
+public class Benutzer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,20 +16,20 @@ public class User implements Serializable {
     private String username;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "benutzer_id")
     private List<Address> addressList;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "benutzer_id")
     private List<Ordering> orderingList;
 
-    public User(String username) {
+    public Benutzer(String username) {
         this.username = username;
         addressList = new ArrayList<>();
         orderingList = new ArrayList<>();
     }
 
-    public User() {
+    public Benutzer() {
 
     }
 

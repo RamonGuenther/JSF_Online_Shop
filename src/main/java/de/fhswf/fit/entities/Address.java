@@ -116,4 +116,8 @@ public class Address implements Serializable {
 
         return address + ", " +postal+" "+ place;
     }
+
+    public String getFullName(){
+        return lastName + ", " + firstName;
+    }
 }

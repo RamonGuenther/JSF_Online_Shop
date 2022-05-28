@@ -11,11 +11,9 @@ import jakarta.inject.Inject;
 
 /**
  * TODO: - Bilder speichern
- *          -  Produkt aus Warenkorb löschen
- *          - Beim editieren inStock beachten und Meldung schicken wenn es nicht passt bzw die Liste der ints der
- *              number methode anpassen an den verfügbaren
-*              - Adressen bearbeiten auch in Tabelle oder löschen oder Karten wie in dem anderen
- *              - Wie updatet man eine Tabelle beziehungsweise den Footer
+ *       - Nach der abgeschlossenen Bestellung fängt order an zu spinnen
+ *       - Alles sauber machen und anfangen zu kommentieren
+ *       - Bestellhistorie
  */
 @Startup
 @Singleton
@@ -23,7 +21,7 @@ public class Bootstrap {
 
     @Inject
     private ProductStore productStore;
-    
+
 
     @Inject
     private CategoryStore categoryStore;
@@ -196,8 +194,8 @@ public class Bootstrap {
         System.out.println("Produkte hinzugefügt und in der Datenbank gespeichert");
 
 
-        User user = new User("user");
-        userStore.save(user);
+        Benutzer benutzer = new Benutzer("user");
+        userStore.save(benutzer);
 
         Address address1 = new Address(
                 "Mustermann",
@@ -219,18 +217,15 @@ public class Bootstrap {
                 "01234 987654321",
                 "mustermann.matthilda@nachrichten.de"
         );
-        user.addAddress(address1);
-        user.addAddress(address2);
-        userStore.update(user);
+        benutzer.addAddress(address1);
+        benutzer.addAddress(address2);
+        userStore.update(benutzer);
 
         System.out.println("Testuser wurden in der Datenbank gespeichert");
 
-        Ordering order1 = new Ordering(
-                user.getAddressList().get(0),
-                user.getAddressList().get(1),
-                "Erste Bestellung :)");
+        Ordering order1 = new Ordering();
 
-        user.addOrder(order1);
+        benutzer.addOrder(order1);
         orderStore.save(order1);
 
        OrderedProduct op = new OrderedProduct(order1, smartphone1,1);
@@ -250,7 +245,7 @@ public class Bootstrap {
 
         orderStore.update(order1);
 
-        System.out.println(user.getOrderingList().get(0).getOrderedProductList().size());
+        System.out.println(benutzer.getOrderingList().get(0).getOrderedProductList().size());
         System.out.println(order1.getOrderedProductList().size());
 
         order1.removeOrderedProduct(op);

@@ -8,9 +8,9 @@ import de.fhswf.fit.stores.UserStore;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.AjaxBehaviorEvent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.primefaces.PrimeFaces;
 import org.primefaces.event.RowEditEvent;
 
 import java.io.Serializable;
@@ -23,7 +23,6 @@ public class ShoppingCartService implements Serializable {
 
     private Ordering order;
 
-
     private List<OrderedProduct> orderedProductList;
 
     private transient OrderStore orderStore;
@@ -34,12 +33,13 @@ public class ShoppingCartService implements Serializable {
 
     private transient OrderedProductStore orderedProductStore;
 
-    private User currentUser;
+    private Benutzer currentBenutzer;
 
     private double totalPrice;
 
-    private int totalAmount;
     private int tmp;
+
+    private String selectedAddress;
 
 
     public ShoppingCartService() {
@@ -48,14 +48,14 @@ public class ShoppingCartService implements Serializable {
     }
 
     private void init() {
-        currentUser = userStore.getAll().get(0);
-        order = currentUser.getOrderingList().get(0);
+        currentBenutzer = userStore.getAll().get(0);
+        order = currentBenutzer.getOrderingList().get(0);
         orderedProductList.addAll(order.getOrderedProductList());
     }
 
     @Inject
     public void setOrderStore(OrderStore orderStore, UserStore userStore, ProductStore productStore
-    , OrderedProductStore orderedProductStore) {
+            , OrderedProductStore orderedProductStore) {
         System.out.println("init");
         this.orderStore = orderStore;
         this.userStore = userStore;
@@ -87,25 +87,24 @@ public class ShoppingCartService implements Serializable {
         product.setInStock(product.getInStock() - 1);
         productStore.update(product);
 
-        currentUser.getOrderingList().get(0).addOrderedProduct(new OrderedProduct(order, product, 1));
+        currentBenutzer.getOrderingList().get(0).addOrderedProduct(new OrderedProduct(order, product, 1));
 
         orderStore.update(order);
 
-        orderedProductList = currentUser.getOrderingList().get(0).getOrderedProductList();
-
-//        orderStore.delete(order);
+        orderedProductList = currentBenutzer.getOrderingList().get(0).getOrderedProductList();
 
     }
 
-    public double getTotalPrice(){
+    public double getTotalPrice() {
         refreshTotalPrice();
         return totalPrice;
     }
 
-    public void refreshTotalPrice(){
+    public void refreshTotalPrice() {
+        System.out.println("refreshTotal");
         totalPrice = 0.0;
-        for(OrderedProduct op : order.getOrderedProductList()){
-            totalPrice+=op.getProduct().getPrice()*op.getAmount();
+        for (OrderedProduct op : order.getOrderedProductList()) {
+            totalPrice += op.getProduct().getPrice() * op.getAmount();
         }
     }
 
@@ -129,20 +128,19 @@ public class ShoppingCartService implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public int[] generateNumbers(OrderedProduct op){
+    public int[] generateNumbers(OrderedProduct op) {
         tmp = op.getAmount(); //Für Später in onRowEdit
         int[] result = new int[op.getProduct().getInStock() + op.getAmount()];
         int i = 0;
-        while(i <= op.getProduct().getInStock()) {
-            result[i]=i+1;
+        while (i < op.getProduct().getInStock() + op.getAmount()) {
+            result[i] = i + 1;
             i++;
         }
         return result;
     }
 
 
-
-    public void deleteProduct(OrderedProduct orderedProduct){
+    public void deleteProduct(OrderedProduct orderedProduct) {
         System.out.println("DELETE");
 
 
@@ -160,19 +158,64 @@ public class ShoppingCartService implements Serializable {
 
     }
 
-    public User getCurrentUser() {
-        return currentUser;
+    public Benutzer getCurrentUser() {
+        return currentBenutzer;
     }
 
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
+    public void setCurrentUser(Benutzer currentBenutzer) {
+        this.currentBenutzer = currentBenutzer;
     }
 
-    public List<String> test(){
+    public List<String> userAddresses() {
         List<String> result = new ArrayList<>();
-        for(Address address : currentUser.getAddressList()){
+        for (Address address : currentBenutzer.getAddressList()) {
             result.add(address.getFullAddress());
         }
         return result;
+    }
+
+    public void saveBillingAddress(AjaxBehaviorEvent event) {
+        System.out.println(selectedAddress);
+        for (Address address : currentBenutzer.getAddressList()) {
+            if (address.getFullAddress().equals(this.selectedAddress)) {
+                order.setBillingAddress(address);
+                orderStore.update(order);
+            }
+        }
+
+    }
+
+    public void saveDeliveryAddress(AjaxBehaviorEvent event) {
+        System.out.println(selectedAddress);
+        for (Address address : currentBenutzer.getAddressList()) {
+            if (address.getFullAddress().equals(this.selectedAddress)) {
+                order.setDeliveryAddress(address);
+                orderStore.update(order);
+            }
+        }
+
+    }
+
+
+    public String getSelectedAddress() {
+        return selectedAddress;
+    }
+
+    public void setSelectedAddress(String selectedAddress) {
+        this.selectedAddress = selectedAddress;
+    }
+
+    public void completeOrderingProcess() {
+        System.out.println("complete Order");
+        order.setOrderStateToOrder();
+        orderStore.update(order);
+
+        Ordering ordering = new Ordering();
+        currentBenutzer.addOrder(ordering);
+        userStore.update(currentBenutzer);
+
+        order = ordering;
+        orderedProductList = order.getOrderedProductList();
+
     }
 }

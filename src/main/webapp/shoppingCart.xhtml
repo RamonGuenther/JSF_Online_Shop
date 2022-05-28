@@ -39,36 +39,44 @@
         </div>
     </nav>
     <div class="container">
-        <h:form id="form">
-            <p:growl id="msgs" showDetail="true"/>
-
+        <h:form id="form-grid">
             <h2 class="text-white mt-5">Warenkorb</h2>
 
-            <div class="text-light mt-5">
+            <div class="mt-5">
+
+                <p:growl id="msgs" showDetail="true"/>
+
+                <p:remoteCommand name="refreshFooter"
+                                 update="shoppingCartGrid:footer"/> <!-- um den Footer zu aktualisieren -->
+
                 <p:dataTable value="#{shoppingCartService.orderedProductList}" var="op" paginator="true" rows="3"
-                             paginatorPosition="bottom" widgetVar="recipeDatatable" reflow="true" editable="true"
-                             id="test">
+                             paginatorPosition="bottom" widgetVar="shoppingCartGrid" reflow="true" editable="true"
+                             id="shoppingCartGrid">
 
 
-                    <p:ajax event="rowEdit" listener="#{shoppingCartService.onRowEdit}" update=":form:msgs"/>
-                    <p:ajax event="rowEditCancel" listener="#{shoppingCartService.onRowCancel}" update=":form:msgs"/>
+                    <p:ajax event="rowEdit" listener="#{shoppingCartService.onRowEdit}"
+                            update=":form-grid:msgs :form-dialog:h"
+                            oncomplete="refreshFooter();"/> <!-- ruft remoteCommand auf könnte es auch apfel nennen -> apfel();-->
+
+                    <p:ajax event="rowEditCancel" listener="#{shoppingCartService.onRowCancel}"
+                            update=":form-grid:msgs"/>
 
                     <f:facet name="header">
-                        <div class="products-table-header">
-                                    <span class="filter-container ui-input-icon-left">
-                                        <i class="pi pi-search"/>
-                                        <p:inputText id="globalFilter" onkeyup="PF('recipeDatatable').filter()"
-                                                     placeholder="Produkt suchen"/>
-                                     </span>
+                        <div>
+                            <span class="filter-container ui-input-icon-left">
+                                <i class="pi pi-search"/>
+                                <p:inputText id="globalFilter" onkeyup="PF('recipeDatatable').filter()"
+                                             placeholder="Produkt suchen"/>
+                             </span>
                         </div>
                     </f:facet>
 
-                    <p:column headerText="Name" sortBy="#{op.product.name}" filterBy="#{op.product.name}#{r.id}"
-                              filterStyle="display:none" width="300">
+                    <p:column headerText="Name" sortBy="#{op.product.name}" filterBy="#{op.product.name}"
+                              filterStyle="display:none" width="250">
                         <h:outputText value="#{op.product.name}"/>
                     </p:column>
 
-                    <p:column headerText="Produktbild" exportable="false" width="300">
+                    <p:column headerText="Produktbild" exportable="false" width="200">
                         <p:graphicImage url="images/#{op.product.firstImage}" title="#{op.product.firstImage}"
                                         width="150"
                                         height="200"/>
@@ -92,11 +100,11 @@
                         </p:cellEditor>
                     </p:column>
 
-                    <p:column headerText="Gesamtpreis" sortBy="#{op.product.price}">
+                    <p:column headerText="Gesamtpreis" sortBy="#{op.product.price}" width="120">
                         <h:outputText value="#{op.product.price*op.amount}€"/>
                     </p:column>
 
-                    <p:column style="width:6rem">
+                    <p:column headerText="Bearbeiten" style="width:6rem">
                         <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
                     </p:column>
 
@@ -104,56 +112,103 @@
                     <p:column headerText="Löschen">
                         <p:commandButton styleClass="edit-button rounded-button ui-button-danger " title="Löschen"
                                          icon="pi pi-trash" actionListener="#{shoppingCartService.deleteProduct(op)}"
-                                         action="#{productService.refreshProducts()}" update=":form"/>
+                                         action="#{productService.refreshProducts()}"
+                                         update="shoppingCartGrid :form-dialog:h"/>
                     </p:column>
 
 
                     <f:facet name="footer">
-                        <span class="p-text-bold">Anzahl: #{shoppingCartService.orderedProductList.size()} | Gesamtpreis: #{shoppingCartService.totalPrice}€</span>
+                        <h:outputText id="footer"
+                                      value="Anzahl: #{shoppingCartService.orderedProductList.size()} | Gesamtpreis: #{shoppingCartService.totalPrice}€"
+                                      class="p-text-bold"/>
                     </f:facet>
+
 
                 </p:dataTable>
 
                 <p:commandButton oncomplete="PF('orderDialog').show()"
                                  styleClass="mt-3"
-                                 value="Bestellen"/> <!--TODO: beimbestellen öffnet sich eine neue Seite oder dialog wo auch die SUmme steht-->
+                                 value="Bestellen"/>
             </div>
-
-            <h:commandButton value="send"/>
-
-
         </h:form>
 
-        <p:dialog styleClass="customDialog" header="Produkt Details" showEffect="fade" widgetVar="orderDialog"
-                  responsive="true" resizable="false" width="600" height="600" closable="true">
+        <h:form id="form-dialog">
 
-            <div class="form-group pt-2">
-                <label for="reptileName">Name</label>
-                <p:inputText value="#{shoppingCartService.order.orderComment}" type="text" name="reptileName"
-                             class="form-control placeholder-wave" id="reptileName" disabled="false"/>
-            </div>
-
-            <div class="form-group pt-2">
-                <label for="reptileType">Lieferadresse</label>
-                <h:selectOneMenu value="#{shoppingCartService.order.deliveryAddress}" class="form-control"
-                                 id="reptileType"
-                                 name="reptileType">
-                    <f:selectItems value="#{shoppingCartService.test()}" var="g" itemValue="#{g}"
-                                   itemLabel="#{g}"/>
-                </h:selectOneMenu>
+            <p:dialog header="Bestellvorgang abschließen" showEffect="fade" widgetVar="orderDialog"
+                      responsive="true" resizable="false" width="800" height="600" closable="true" id="orderDialog">
 
                 <div class="form-group pt-2">
-                    <label for="o">Name</label>
-                    <h:outputText value="#{shoppingCartService.order.deliveryAddress.lastName}" type="text"
+                    <label for="h">Summe</label>
+                    <h:outputText value="#{shoppingCartService.totalPrice}" type="text"
                                   name="reptileName"
-                                  class="form-control placeholder-wave" id="o" disabled="false"/>
+                                  class="form-control placeholder-wave" id="h"/>
                 </div>
-            </div>
-            <!--                        <p:commandButton type="submit" value="Bestätigen" class="btn btn-success mt-3 btn-sm"-->
-            <!--                                         action="#{reptileService.updateReptile(reptileService.selectedReptile)}"-->
-            <!--                                         update=":form"> </p:commandButton>-->
-        </p:dialog>
 
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class="col-sm">
+                        <label for="select1">Lieferadresse</label>
+                        <h:selectOneMenu value="#{shoppingCartService.selectedAddress}" class="form-control"
+                                         id="select1"
+                                         name="select1">
+                            <f:selectItems value="#{shoppingCartService.userAddresses()}" var="g" itemValue="#{g}"
+                                           itemLabel="#{g}"/>
+                            <f:ajax listener="#{shoppingCartService.saveBillingAddress}" render="billingName billingPhoneNumber"/>
+                        </h:selectOneMenu>
+                    </div>
+                    <div class="col-sm">
+
+                        <label for="select2">Rechnungsadresse</label>
+                        <h:selectOneMenu value="#{shoppingCartService.selectedAddress}" class="form-control"
+                                         id="select2"
+                                         name="select2">
+                            <f:selectItems value="#{shoppingCartService.userAddresses()}" var="g" itemValue="#{g}"
+                                           itemLabel="#{g}"/>
+                            <f:ajax listener="#{shoppingCartService.saveDeliveryAddress}" render="deliveryName deliveryPhoneNumber"/>
+                        </h:selectOneMenu>
+                    </div>
+                </div>
+
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class=" col-sm form-group pt-2">
+                        <label for="billingName">Name</label>
+                        <h:outputText value="#{shoppingCartService.order.billingAddress.fullName}" type="text"
+                                      name="billingName"
+                                      class="form-control placeholder-wave" id="billingName"/>
+                    </div>
+                    <div class=" col-sm form-group pt-2">
+                        <label for="deliveryName">Name</label>
+                        <h:outputText value="#{shoppingCartService.order.deliveryAddress.fullName}" type="text"
+                                      name="deliveryName"
+                                      class="form-control placeholder-wave" id="deliveryName"/>
+                    </div>
+                </div>
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class=" col-sm form-group pt-2">
+                        <label for="billingPhoneNumber">Telefonnummer</label>
+                        <h:outputText value="#{shoppingCartService.order.billingAddress.phoneNumber}" type="text"
+                                      name="billingPhoneNumber"
+                                      class="form-control placeholder-wave" id="billingPhoneNumber"/>
+                    </div>
+                    <div class=" col-sm form-group pt-2">
+                        <label for="deliveryPhoneNumber">Telefonnummer</label>
+                        <h:outputText value="#{shoppingCartService.order.deliveryAddress.phoneNumber}" type="text"
+                                      name="deliveryPhoneNumber"
+                                      class="form-control placeholder-wave" id="deliveryPhoneNumber"/>
+                    </div>
+                </div>
+
+                <div class="form-group pt-2">
+                    <label for="orderComment">Bestellkommentar</label>
+                    <p:inputTextarea value="#{shoppingCartService.order.orderComment}" type="text" name="reptileName"
+                                 class="form-control placeholder-wave" id="orderComment" disabled="false"/>
+                </div>
+
+
+                <p:commandButton styleClass="mt-4" action="#{shoppingCartService.completeOrderingProcess()}" value="Bestellen" update="orderDialog form-grid"/>
+            </p:dialog>
+        </h:form>
 
     </div>
 </h:body>

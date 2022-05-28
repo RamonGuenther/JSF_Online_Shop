@@ -1,12 +1,7 @@
 package de.fhswf.fit.services;
 
-import de.fhswf.fit.entities.OrderedProduct;
-import de.fhswf.fit.entities.Ordering;
 import de.fhswf.fit.entities.Product;
-import de.fhswf.fit.entities.User;
-import de.fhswf.fit.stores.OrderStore;
 import de.fhswf.fit.stores.ProductStore;
-import de.fhswf.fit.stores.UserStore;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;

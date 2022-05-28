@@ -1,7 +1,6 @@
 package de.fhswf.fit.stores;
 
-import de.fhswf.fit.entities.Product;
-import de.fhswf.fit.entities.User;
+import de.fhswf.fit.entities.Benutzer;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -22,20 +21,20 @@ public class UserStore implements Serializable {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<User> getAll(){
+    public List<Benutzer> getAll(){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
-        Root<User> root = criteriaQuery.from(User.class);
+        CriteriaQuery<Benutzer> criteriaQuery = criteriaBuilder.createQuery(Benutzer.class);
+        Root<Benutzer> root = criteriaQuery.from(Benutzer.class);
         criteriaQuery.select(root);
-        TypedQuery<User> query = entityManager.createQuery(criteriaQuery);
+        TypedQuery<Benutzer> query = entityManager.createQuery(criteriaQuery);
 
         return query.getResultList();
     }
-    public void save(User newUser){
-        entityManager.persist(newUser);
+    public void save(Benutzer newBenutzer){
+        entityManager.persist(newBenutzer);
     }
 
-    public void update(User user){
-        entityManager.merge(user);
+    public void update(Benutzer benutzer){
+        entityManager.merge(benutzer);
     }
 }

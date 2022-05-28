@@ -36,6 +36,7 @@ public class Ordering implements Serializable {
     }
 
     public Ordering() {
+        orderState = OrderState.OFFEN;
 
     }
 
