@@ -30,7 +30,7 @@ public class Address implements Serializable {
 
     private String mail;
 
-    public Address(String firstName, String lastName, String address, String postal, String place, String country, String phoneNumber, String mail) {
+    public Address(String firstName, String lastName, String address, String place,  String postal, String country, String phoneNumber, String mail) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -113,7 +113,6 @@ public class Address implements Serializable {
     }
 
     public String getFullAddress(){
-
         return address + ", " +postal+" "+ place;
     }
 

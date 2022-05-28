@@ -61,11 +61,17 @@ public class Benutzer implements Serializable {
         this.id = id;
     }
 
-    public void addAddress(Address newAddress){
+    public void addAddress(Address newAddress) {
         addressList.add(newAddress);
     }
 
-    public void addOrder(Ordering newOrder){
+    public void addOrder(Ordering newOrder) {
         orderingList.add(newOrder);
     }
+
+
+    public void removeAddress(Address address) {
+        addressList.remove(address);
+    }
+
 }

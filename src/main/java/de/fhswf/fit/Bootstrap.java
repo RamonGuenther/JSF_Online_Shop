@@ -10,10 +10,12 @@ import jakarta.ejb.Startup;
 import jakarta.inject.Inject;
 
 /**
- * TODO: - Bilder speichern
- *       - Nach der abgeschlossenen Bestellung fängt order an zu spinnen
+ * TODO:
  *       - Alles sauber machen und anfangen zu kommentieren
  *       - Bestellhistorie
+ *       - Bestellmenge ändern aktualisert sich nicht auf der Produktübersicht erst nach update durch den Dialog!
+ *       - Adresse auswählen soll da immer neu stehen und vorher am besten nichts eingetragen haben?
+ *       - Bilder speichern / mehrere Bilder bei Detailansicht zum scrollen oder so
  */
 @Startup
 @Singleton
@@ -21,7 +23,6 @@ public class Bootstrap {
 
     @Inject
     private ProductStore productStore;
-
 
     @Inject
     private CategoryStore categoryStore;
@@ -36,9 +37,6 @@ public class Bootstrap {
     private OrderedProductStore orderedProductStore;
 
 
-    /**
-     * TODO: - Für den Warenkorb wieder immer sagen die letzte Bestellung is der Warenkorb alles davor is die Bestellhistorie
-     */
     @PostConstruct
     public void init() {
         System.out.println("POST CONSTRUCT");
@@ -198,8 +196,8 @@ public class Bootstrap {
         userStore.save(benutzer);
 
         Address address1 = new Address(
-                "Mustermann",
                 "Max",
+                "Mustermann",
                 "Apfelstraße 12",
                 "Birnenhausen",
                 "12345",
@@ -208,8 +206,8 @@ public class Bootstrap {
                 "mustermann.max@mail.com"
         );
         Address address2 = new Address(
-                "Mustermann",
                 "Matthilda",
+                "Mustermann",
                 "Birnengasse 33",
                 "Birnenhausen",
                 "12345",
@@ -228,11 +226,11 @@ public class Bootstrap {
         benutzer.addOrder(order1);
         orderStore.save(order1);
 
-       OrderedProduct op = new OrderedProduct(order1, smartphone1,1);
+        OrderedProduct op = new OrderedProduct(order1, smartphone1, 1);
 
         order1.addOrderedProduct(op);
 
-        order1.addOrderedProduct( new OrderedProduct(order1, smartphone1,1));
+        order1.addOrderedProduct(new OrderedProduct(order1, smartphone1, 1));
 
 //        order1.addOrderedProduct(new OrderedProduct(order1, smartphone2,1));
 

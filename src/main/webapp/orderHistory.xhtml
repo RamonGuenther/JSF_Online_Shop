@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Onlineshop"/>
+    <meta name="author" content="Ramon"/>
+    <title>Rezeptverwaltung</title>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/css/styles.css" rel="stylesheet"/>
+</h:head>
+<h:body class="bg-dark">
+    <!-- Responsive navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+        <div class="container">
+            <a class="navbar-brand" href="/">Krasser Shop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"/>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="${pageContext.request.contextPath}/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="address.xhtml">Adressen</a></li>
+
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="orderHistory.xhtml">Bestellhistorie</a></li>
+
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="shoppingCart.xhtml">Warenkorb</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+
+    </div>
+</h:body>
+</html>

@@ -37,7 +37,7 @@ public class Ordering implements Serializable {
 
     public Ordering() {
         orderState = OrderState.OFFEN;
-
+        orderedProductList = new ArrayList<>();
     }
 
     public Long getId() {
@@ -108,11 +108,9 @@ public class Ordering implements Serializable {
     }
 
     public void removeOrderedProduct(OrderedProduct orderedProduct) {
-
         for (int i = 0; i < orderedProductList.size(); i++) {
             if (orderedProductList.get(i).getProduct().getId().equals(orderedProduct.getProduct().getId())) {
                 orderedProductList.remove(i);
-                System.out.println("GEFUNDEN");
                 return;
             }
         }

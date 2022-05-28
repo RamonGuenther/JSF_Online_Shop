@@ -24,20 +24,224 @@
             <a class="navbar-brand" href="/">Krasser Shop</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
+                    aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"/>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="address.xhtml">Adressen</a></li>
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="shoppingCart.xhtml">Warenkorb</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="${pageContext.request.contextPath}/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="address.xhtml">Adressen</a></li>
+
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="orderHistory.xhtml">Bestellhistorie</a></li>
+
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="shoppingCart.xhtml">Warenkorb</a></li>
                 </ul>
             </div>
         </div>
     </nav>
     <div class="container">
-        <h:form id="form">
-            <h2>lel</h2>
+        <h:form id="form-grid">
+
+            <h2 class="text-white mt-5 mb-4"> Eigene Adressen
+                <p:commandButton
+                        style="width: 30px; height: 30px;"
+                        icon="pi pi-plus"
+                        oncomplete="PF('addAddressDialog').show()"
+                        styleClass="edit-button ui-button-success"
+                        title="view"/>
+            </h2>
+
+            <p:dataTable value="#{addressService.addressList}" var="address" paginator="true" rows="10"
+                         paginatorPosition="bottom" widgetVar="addressGrid" reflow="true" editable="true"
+                         id="addressGrid">
+
+                <f:facet name="header">
+                    <div>
+                            <span class="filter-container ui-input-icon-left">
+                                <i class="pi pi-search"/>
+                                <p:inputText id="globalFilter" onkeyup="PF('addressGrid').filter()"
+                                             placeholder="Adresse suchen..."/>
+                             </span>
+                    </div>
+                </f:facet>
+
+                <p:column headerText="Name" sortBy="#{address.fullName}" filterBy="#{address.fullName}"
+                          filterStyle="display:none">
+                    <h:outputText value="#{address.fullName}"/>
+                </p:column>
+
+                <p:column headerText="Adresse" sortBy="#{address.fullAddress}" filterBy="#{address.fullAddress}"
+                          filterStyle="display:none" width="320">
+                    <h:outputText value="#{address.fullAddress}"/>
+                </p:column>
+
+
+                <p:column headerText="E-Mail" sortBy="#{address.mail}" filterBy="#{address.mail}"
+                          filterStyle="display:none" width="300">
+                    <h:outputText value="#{address.mail}"/>
+                </p:column>
+
+
+                <p:column headerText="Bearbeiten">
+                    <p:commandButton update=":form-dialog:addressDetails"
+                                     icon="pi pi-pencil"
+                                     oncomplete="PF('addressDialog').show()"
+                                     styleClass="edit-button rounded-button ui-button-primar">
+                        <f:setPropertyActionListener value="#{address}"
+                                                     target="#{addressService.selectedAddress}"/>
+                    </p:commandButton>
+                </p:column>
+
+                <p:column headerText="Löschen">
+                    <p:commandButton styleClass="edit-button rounded-button ui-button-danger " title="Löschen"
+                                     icon="pi pi-trash" actionListener="#{addressService.deleteAddress(address)}"
+                                     update="addressGrid"
+                    />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <h:form id="form-dialog">
+            <p:dialog header="Adresse Bearbeiten" showEffect="fade" widgetVar="addressDialog"
+                      responsive="true" resizable="false" width="800" height="400" closable="true">
+
+                <p:outputPanel id="addressDetails">
+
+
+                    <div class="form-group pt-2 list-group-horizontal row">
+                        <div class="col-sm">
+                            <label for="firstname">Vorname</label>
+                            <h:inputText value="#{addressService.selectedAddress.firstName}" type="text"
+                                         class="form-control placeholder-wave" id="firstname"/>
+                        </div>
+
+                        <div class="col-sm">
+                            <label for="lastname">Nachname</label>
+                            <h:inputText value="#{addressService.selectedAddress.lastName}" type="text"
+                                         class="form-control placeholder-wave" id="lastname"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group pt-2 list-group-horizontal row">
+
+                        <div class="col-sm">
+                            <label for="address">Adresse</label>
+                            <h:inputText value="#{addressService.selectedAddress.address}" type="text"
+                                         class="form-control placeholder-wave" id="address"/>
+                        </div>
+
+                        <div class="col-sm">
+                            <label for="country">Land</label>
+                            <h:inputText value="#{addressService.selectedAddress.country}" type="text"
+                                         class="form-control placeholder-wave" id="country"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group pt-2 list-group-horizontal row">
+
+                        <div class="col-sm">
+                            <label for="postal">Postleitzahl</label>
+                            <h:inputText value="#{addressService.selectedAddress.postal}" type="text"
+                                         class="form-control placeholder-wave" id="postal"/>
+                        </div>
+
+                        <div class="col-sm">
+
+                            <label for="place">Ort</label>
+                            <h:inputText value="#{addressService.selectedAddress.place}" type="text"
+                                         class="form-control placeholder-wave" id="place"/>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group pt-2 list-group-horizontal row">
+
+                        <div class="col-sm">
+                            <label for="phoneNumber">Telefonnummer</label>
+                            <h:inputText value="#{addressService.selectedAddress.phoneNumber}" type="text"
+                                         class="form-control placeholder-wave" id="phoneNumber"/>
+                        </div>
+
+                        <div class="col-sm">
+                            <label for="mail">E-Mail</label>
+                            <h:inputText value="#{addressService.selectedAddress.mail}" type="text"
+                                         class="form-control placeholder-wave" id="mail"/>
+                        </div>
+                    </div>
+                </p:outputPanel>
+
+                <p:commandButton value="Speichern"
+                                 action="#{addressService.updateAddress(addressService.selectedAddress)}"
+                                 update="form-dialog form-grid"
+                                 styleClass="mt-4"/>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="form-dialog-add">
+            <p:dialog header="Adresse Hinzufügen" showEffect="fade" widgetVar="addAddressDialog"
+                      responsive="true" resizable="false" width="800" height="400" closable="true">
+
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class="col-sm">
+                        <label for="newFirstname">Vorname</label>
+                        <h:inputText value="#{addressService.address.firstName}" type="text"
+                                     class="form-control placeholder-wave" id="newFirstname"/>
+                    </div>
+                    <div class="col-sm">
+                        <label for="newLastname">Nachname</label>
+                        <h:inputText value="#{addressService.address.lastName}" type="text"
+                                     class="form-control placeholder-wave" id="newLastname"/>
+                    </div>
+                </div>
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class="col-sm">
+                        <label for="newAddress">Adresse</label>
+                        <h:inputText value="#{addressService.address.address}" type="text"
+                                     class="form-control placeholder-wave" id="newAddress"/>
+                    </div>
+                    <div class="col-sm">
+                        <label for="newCountry">Land</label>
+                        <h:inputText value="#{addressService.address.country}" type="text"
+                                     class="form-control placeholder-wave" id="newCountry"/>
+                    </div>
+                </div>
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class="col-sm">
+                        <label for="newPostal">Postleitzahl</label>
+                        <h:inputText value="#{addressService.address.postal}" type="text"
+                                     class="form-control placeholder-wave" id="newPostal"/>
+                    </div>
+                    <div class="col-sm">
+                        <label for="newPlace">Ort</label>
+                        <h:inputText value="#{addressService.address.place}" type="text"
+                                     class="form-control placeholder-wave" id="newPlace"/>
+                    </div>
+                </div>
+
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class="col-sm">
+                        <label for="newPhoneNumber">Telefonnummer</label>
+                        <h:inputText value="#{addressService.address.phoneNumber}" type="text"
+                                     class="form-control placeholder-wave" id="newPhoneNumber"/>
+                    </div>
+                    <div class="col-sm">
+                        <label for="newMail">E-Mail</label>
+                        <h:inputText value="#{addressService.address.mail}" type="text"
+                                     class="form-control placeholder-wave" id="newMail"/>
+                    </div>
+                </div>
+
+
+                <p:commandButton value="Hinzufügen" action="#{addressService.saveAddress(addressService.address)}"
+                                 update="form-grid form-dialog-add" type="submit" styleClass="mt-5"/>
+            </p:dialog>
         </h:form>
     </div>
 </h:body>

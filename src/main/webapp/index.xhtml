@@ -24,13 +24,18 @@
             <a class="navbar-brand" href="/">Krasser Shop</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
+                    aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"/>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="${pageContext.request.contextPath}/">Home</a></li>
                     <li class="nav-item"><a class="nav-link active" aria-current="page"
                                             href="address.xhtml">Adressen</a></li>
+
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="orderHistory.xhtml">Bestellhistorie</a></li>
+
                     <li class="nav-item"><a class="nav-link active" aria-current="page"
                                             href="shoppingCart.xhtml">Warenkorb</a></li>
                 </ul>
@@ -38,112 +43,108 @@
         </div>
     </nav>
     <div class="container">
-        <h:form id="form">
-            <h2 class="text-white mt-5">Produktübersicht</h2>
+        <h:form id="form-grid">
+            <h2 class="text-white mt-5 mb-4">Produktübersicht</h2>
 
-            <div class="text-light mt-5">
-                <p:dataTable value="#{productService.productList}" var="r" paginator="true" rows="3"
-                             paginatorPosition="bottom" widgetVar="recipeDatatable" reflow="true">
+            <p:dataTable value="#{productService.productList}" var="r" paginator="true" rows="3"
+                         paginatorPosition="bottom" widgetVar="productDatatable" reflow="true">
 
-                    <f:facet name="header">
-                        <div class="products-table-header">
+                <f:facet name="header">
+                    <div class="products-table-header">
                                     <span class="filter-container ui-input-icon-left">
                                         <i class="pi pi-search"/>
-                                        <p:inputText id="globalFilter" onkeyup="PF('recipeDatatable').filter()"
+                                        <p:inputText id="globalFilter" onkeyup="PF('productDatatable').filter()"
                                                      placeholder="Produkt suchen"/>
                                      </span>
-                        </div>
-                    </f:facet>
+                    </div>
+                </f:facet>
 
 
-                    <p:column headerText="Name" sortBy="#{r.name}" filterBy="#{r.name}#{r.id}"
-                              filterStyle="display:none" width="300">
-                        <h:outputText value="#{r.name}"/>
-                    </p:column>
+                <p:column headerText="Name" sortBy="#{r.name}" filterBy="#{r.name}#{r.id}"
+                          filterStyle="display:none" width="300">
+                    <h:outputText value="#{r.name}"/>
+                </p:column>
 
-                    <p:column headerText="Produktbild" exportable="false" width="300">
-                        <p:graphicImage url="images/#{r.firstImage}" title="#{r.firstImage}" width="150" height="200"/>
-                    </p:column>
+                <p:column headerText="Produktbild" exportable="false" width="300">
+                    <p:graphicImage url="images/#{r.firstImage}" title="#{r.firstImage}" width="150" height="200"/>
+                </p:column>
 
-                    <p:column headerText="Preis" sortBy="#{r.price}">
-                        <h:outputText value="#{r.price}€"/>
-                    </p:column>
+                <p:column headerText="Preis" sortBy="#{r.price}">
+                    <h:outputText value="#{r.price}€"/>
+                </p:column>
 
-                    <p:column headerText="Auf Lager" sortBy="#{r.inStock}">
-                        <h:outputText value="#{r.inStock}"/>
-                    </p:column>
+                <p:column headerText="Auf Lager" sortBy="#{r.inStock}">
+                    <h:outputText value="#{r.inStock}"/>
+                </p:column>
 
-                    <p:column headerText="Produktkategorie" sortBy="#{r.mainCategory.label}" width="200">
-                        <h:outputText value="#{r.mainCategory.label}"/>
-                    </p:column>
+                <p:column headerText="Produktkategorie" sortBy="#{r.mainCategory.label}" width="200">
+                    <h:outputText value="#{r.mainCategory.label}"/>
+                </p:column>
 
-                    <p:column headerText="Details">
-                        <p:commandButton update=":form:productDetails"
-                                         icon="pi pi-search"
-                                         oncomplete="PF('productDialog').show()"
-                                         styleClass="edit-button rounded-button ui-button-success">
-                            <f:setPropertyActionListener value="#{r}"
-                                                         target="#{productService.selectedProduct}"/>
-                        </p:commandButton>
-                    </p:column>
-                </p:dataTable>
-            </div>
+                <p:column headerText="Details">
+                    <p:commandButton update=":form-dialog:productDetails"
+                                     icon="pi pi-search"
+                                     oncomplete="PF('productDialog').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{r}"
+                                                     target="#{productService.selectedProduct}"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
 
+        </h:form>
 
-            <p:dialog styleClass="customDialog" header="Produkt - Details" showEffect="fade" widgetVar="productDialog"
+        <h:form id="form-dialog">
+
+            <p:dialog header="Produkt - Details" showEffect="fade" widgetVar="productDialog"
                       responsive="true" resizable="false" width="800" height="680" closable="true">
                 <p:outputPanel id="productDetails">
-                    <p:outputPanel rendered="#{not empty productService.selectedProduct}">
+                    <h2>#{productService.selectedProduct.name}</h2>
 
-                        <h2>#{productService.selectedProduct.name}</h2>
+                    <p:graphicImage styleClass="border border-1 border-dark p-2"
+                                    url="images/#{productService.selectedProduct.firstImage}" width="220"
+                                    height="300"/>
 
-                        <p:graphicImage styleClass="border border-1 border-dark p-2"
-                                        url="images/#{productService.selectedProduct.firstImage}" width="220"
-                                        height="300"/>
+                    <div class="form-group pt-2 list-group-horizontal row">
+                        <div class="col-sm">
+                            <label for="price">Preis</label>
+                            <h:outputText value="#{productService.selectedProduct.price}€" type="text"
+                                          class="form-control placeholder-wave" id="price"/>
 
-                        <div class="form-group pt-2 list-group-horizontal row">
-                            <div class="col-sm">
-                                <label for="reptileBirthday">Preis</label>
-                                <p:inputText value="#{productService.selectedProduct.price}€" type="text"
-                                             name="reptileBirthday"
-                                             class="form-control placeholder-wave" id="reptileBirthday"
-                                             disabled="true"/>
-
-                            </div>
-                            <div class="col-sm">
-                                <label for="inStock">Auf Lager</label>
-                                <p:inputText value="#{productService.selectedProduct.inStock}" type="text"
-                                             name="inStock"
-                                             class="form-control placeholder-wave" id="inStock" disabled="true"/>
-                            </div>
                         </div>
-
-                        <div class="form-group pt-2">
-                            <label for="description">Beschreibung</label>
-                            <p:inputTextarea value="#{productService.selectedProduct.description}" type="text"
-                                             name="description"
-                                             class="form-control placeholder-wave" id="description" disabled="true"/>
+                        <div class="col-sm">
+                            <label for="inStock">Auf Lager</label>
+                            <h:outputText value="#{productService.selectedProduct.inStock}" type="text"
+                                          class="form-control placeholder-wave" id="inStock"/>
                         </div>
+                    </div>
 
-                        <div class="form-group pt-2">
-                            <ui:repeat value="#{productService.selectedProduct.categoryList}" var="category">
-                                <p:badge value="#{category.categoryType.label}" styleClass="m-lg-2"/>
-                            </ui:repeat>
-                        </div>
+                    <div class="form-group pt-2">
+                        <label for="description">Beschreibung</label>
+                        <h:outputText value="#{productService.selectedProduct.description}" type="text"
+                                      name="description"
+                                      class="form-control placeholder-wave" id="description"/>
+                    </div>
 
-                    </p:outputPanel>
+                    <div class="form-group pt-2">
+                        <ui:repeat value="#{productService.selectedProduct.categoryList}" var="category">
+                            <p:badge value="#{category.categoryType.label}" styleClass="m-lg-2"/>
+                        </ui:repeat>
+                    </div>
                 </p:outputPanel>
+
                 <f:facet name="footer">
                     <p:commandButton styleClass="mt-3" value="In den Warenkorb"
-                                     update="productDetails form" >
+                                     update="productDetails form-grid form-dialog">
 
-                        <f:actionListener binding="#{shoppingCartService.addToShoppingCart(productService.selectedProduct)}"/>
+                        <f:actionListener
+                                binding="#{shoppingCartService.addToShoppingCart(productService.selectedProduct)}"/>
                         <f:actionListener binding="#{productService.refreshProducts()}"/>
                     </p:commandButton>
                 </f:facet>
+
             </p:dialog>
         </h:form>
-
     </div>
 </h:body>
 

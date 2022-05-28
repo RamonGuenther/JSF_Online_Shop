@@ -49,13 +49,12 @@ public class ShoppingCartService implements Serializable {
 
     private void init() {
         currentBenutzer = userStore.getAll().get(0);
-        order = currentBenutzer.getOrderingList().get(0);
-        orderedProductList.addAll(order.getOrderedProductList());
+        order = currentBenutzer.getOrderingList().get(currentBenutzer.getOrderingList().size() - 1);
+        orderedProductList = order.getOrderedProductList();
     }
 
     @Inject
-    public void setOrderStore(OrderStore orderStore, UserStore userStore, ProductStore productStore
-            , OrderedProductStore orderedProductStore) {
+    public void setOrderStore(OrderStore orderStore, UserStore userStore, ProductStore productStore, OrderedProductStore orderedProductStore) {
         System.out.println("init");
         this.orderStore = orderStore;
         this.userStore = userStore;
@@ -87,11 +86,11 @@ public class ShoppingCartService implements Serializable {
         product.setInStock(product.getInStock() - 1);
         productStore.update(product);
 
-        currentBenutzer.getOrderingList().get(0).addOrderedProduct(new OrderedProduct(order, product, 1));
+        order.addOrderedProduct(new OrderedProduct(order, product, 1));
 
         orderStore.update(order);
 
-        orderedProductList = currentBenutzer.getOrderingList().get(0).getOrderedProductList();
+        orderedProductList = order.getOrderedProductList();
 
     }
 
@@ -106,6 +105,7 @@ public class ShoppingCartService implements Serializable {
         for (OrderedProduct op : order.getOrderedProductList()) {
             totalPrice += op.getProduct().getPrice() * op.getAmount();
         }
+        totalPrice = totalPrice * 100 / 100; //Aus Gründen
     }
 
     public void onRowEdit(RowEditEvent<OrderedProduct> event) {
@@ -128,7 +128,7 @@ public class ShoppingCartService implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public int[] generateNumbers(OrderedProduct op) {
+    public int[] generateAmountNumbers(OrderedProduct op) {
         tmp = op.getAmount(); //Für Später in onRowEdit
         int[] result = new int[op.getProduct().getInStock() + op.getAmount()];
         int i = 0;
@@ -143,19 +143,15 @@ public class ShoppingCartService implements Serializable {
     public void deleteProduct(OrderedProduct orderedProduct) {
         System.out.println("DELETE");
 
-
         orderedProduct.getProduct().setInStock(orderedProduct.getProduct().getInStock() + orderedProduct.getAmount());
         productStore.update(orderedProduct.getProduct());
-
 
         order.removeOrderedProduct(orderedProduct);
         orderStore.update(order);
 
         orderedProductStore.delete(orderedProduct);
 
-
         orderedProductList = order.getOrderedProductList();
-
     }
 
     public Benutzer getCurrentUser() {
@@ -196,7 +192,6 @@ public class ShoppingCartService implements Serializable {
 
     }
 
-
     public String getSelectedAddress() {
         return selectedAddress;
     }
@@ -211,11 +206,12 @@ public class ShoppingCartService implements Serializable {
         orderStore.update(order);
 
         Ordering ordering = new Ordering();
+        orderStore.save(ordering);
         currentBenutzer.addOrder(ordering);
         userStore.update(currentBenutzer);
 
-        order = ordering;
-        orderedProductList = order.getOrderedProductList();
+        order = currentBenutzer.getOrderingList().get(currentBenutzer.getOrderingList().size() - 1);
 
+        orderedProductList = order.getOrderedProductList();
     }
 }
