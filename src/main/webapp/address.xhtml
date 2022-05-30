@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="description" content="Rezeptverwaltung"/>
     <meta name="author" content="Ramon"/>
-    <title>Rezeptverwaltung</title>
+    <title>Onlineshop</title>
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="/css/styles.css" rel="stylesheet"/>
 </h:head>
@@ -239,7 +239,8 @@
                 </div>
 
 
-                <p:commandButton value="Hinzufügen" action="#{addressService.saveAddress(addressService.address)}"
+                <p:commandButton value="Hinzufügen"
+                                 actionListener="#{addressService.saveAddress(addressService.address)}"
                                  update="form-grid form-dialog-add" type="submit" styleClass="mt-5"/>
             </p:dialog>
         </h:form>

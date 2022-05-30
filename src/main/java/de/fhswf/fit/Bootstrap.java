@@ -11,10 +11,8 @@ import jakarta.inject.Inject;
 
 /**
  * TODO:
- *       - Alles sauber machen und anfangen zu kommentieren
- *       - Bestellhistorie
+ *       - Bestellhistorie View
  *       - Bestellmenge ändern aktualisert sich nicht auf der Produktübersicht erst nach update durch den Dialog!
- *       - Adresse auswählen soll da immer neu stehen und vorher am besten nichts eingetragen haben?
  *       - Bilder speichern / mehrere Bilder bei Detailansicht zum scrollen oder so
  */
 @Startup

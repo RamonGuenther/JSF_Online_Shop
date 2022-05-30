@@ -11,6 +11,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.RowEditEvent;
 
 import java.io.Serializable;
@@ -33,24 +34,25 @@ public class ShoppingCartService implements Serializable {
 
     private transient OrderedProductStore orderedProductStore;
 
-    private Benutzer currentBenutzer;
-
     private double totalPrice;
 
     private int tmp;
 
     private String selectedAddress;
+    private List<String> userAddresses;
 
 
     public ShoppingCartService() {
         orderedProductList = new ArrayList<>();
         order = new Ordering();
+        userAddresses = new ArrayList<>();
     }
 
     private void init() {
-        currentBenutzer = userStore.getAll().get(0);
-        order = currentBenutzer.getOrderingList().get(currentBenutzer.getOrderingList().size() - 1);
+        Benutzer currentUser = userStore.getById(1L);
+        order = currentUser.getOrderingList().get(currentUser.getOrderingList().size() - 1);
         orderedProductList = order.getOrderedProductList();
+        createUserAddresses();
     }
 
     @Inject
@@ -154,25 +156,23 @@ public class ShoppingCartService implements Serializable {
         orderedProductList = order.getOrderedProductList();
     }
 
-    public Benutzer getCurrentUser() {
-        return currentBenutzer;
+
+    public List<String> getUserAddresses() {
+        return userAddresses;
     }
 
-    public void setCurrentUser(Benutzer currentBenutzer) {
-        this.currentBenutzer = currentBenutzer;
-    }
-
-    public List<String> userAddresses() {
-        List<String> result = new ArrayList<>();
-        for (Address address : currentBenutzer.getAddressList()) {
-            result.add(address.getFullAddress());
+    public void createUserAddresses(){
+        Benutzer currentUser = userStore.getById(1L);
+        userAddresses = new ArrayList<>();
+        for (Address address : currentUser.getAddressList()) {
+            userAddresses.add(address.getFullAddress());
         }
-        return result;
+        System.out.println(userAddresses.size());
     }
 
     public void saveBillingAddress(AjaxBehaviorEvent event) {
-        System.out.println(selectedAddress);
-        for (Address address : currentBenutzer.getAddressList()) {
+        Benutzer currentUser = userStore.getById(1L);
+        for (Address address : currentUser.getAddressList()) {
             if (address.getFullAddress().equals(this.selectedAddress)) {
                 order.setBillingAddress(address);
                 orderStore.update(order);
@@ -182,8 +182,10 @@ public class ShoppingCartService implements Serializable {
     }
 
     public void saveDeliveryAddress(AjaxBehaviorEvent event) {
+        Benutzer currentUser = userStore.getById(1L);
+
         System.out.println(selectedAddress);
-        for (Address address : currentBenutzer.getAddressList()) {
+        for (Address address : currentUser.getAddressList()) {
             if (address.getFullAddress().equals(this.selectedAddress)) {
                 order.setDeliveryAddress(address);
                 orderStore.update(order);
@@ -201,17 +203,20 @@ public class ShoppingCartService implements Serializable {
     }
 
     public void completeOrderingProcess() {
+        Benutzer currentUser = userStore.getById(1L);
+
         System.out.println("complete Order");
         order.setOrderStateToOrder();
         orderStore.update(order);
 
         Ordering ordering = new Ordering();
         orderStore.save(ordering);
-        currentBenutzer.addOrder(ordering);
-        userStore.update(currentBenutzer);
+        currentUser.addOrder(ordering);
+        userStore.update(currentUser);
 
-        order = currentBenutzer.getOrderingList().get(currentBenutzer.getOrderingList().size() - 1);
+        order = currentUser.getOrderingList().get(currentUser.getOrderingList().size() - 1);
 
         orderedProductList = order.getOrderedProductList();
+        selectedAddress = "";
     }
 }

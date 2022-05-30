@@ -30,6 +30,10 @@ public class UserStore implements Serializable {
 
         return query.getResultList();
     }
+
+    public Benutzer getById(Long id){
+        return entityManager.find(Benutzer.class, id);
+    }
     public void save(Benutzer newBenutzer){
         entityManager.persist(newBenutzer);
     }

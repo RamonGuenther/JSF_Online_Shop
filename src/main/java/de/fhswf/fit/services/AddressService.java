@@ -76,8 +76,10 @@ public class AddressService implements Serializable {
     }
 
     public void saveAddress(Address address) {
+        System.out.println("Save Address");
         currentUser.addAddress(address);
         userStore.update(currentUser);
+        System.out.println(currentUser.getAddressList().size());
         this.address = new Address();
     }
 

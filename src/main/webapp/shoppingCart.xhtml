@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="description" content="Rezeptverwaltung"/>
     <meta name="author" content="Ramon"/>
-    <title>Rezeptverwaltung</title>
+    <title>Onlineshop</title>
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="/css/styles.css" rel="stylesheet"/>
 </h:head>
@@ -67,7 +67,7 @@
                 </f:facet>
 
                 <p:ajax event="rowEdit" listener="#{shoppingCartService.onRowEdit}"
-                        update=":form-grid:msgs :form-dialog:h"
+                        update=":form-grid:msgs :form-dialog:totalPrice"
                         oncomplete="refreshFooter();"/> <!-- ruft remoteCommand auf könnte es auch apfel nennen -> apfel();-->
 
                 <p:ajax event="rowEditCancel" listener="#{shoppingCartService.onRowCancel}"
@@ -115,7 +115,7 @@
                     <p:commandButton styleClass="edit-button rounded-button ui-button-danger " title="Löschen"
                                      icon="pi pi-trash" actionListener="#{shoppingCartService.deleteProduct(op)}"
                                      action="#{productService.refreshProducts()}"
-                                     update="shoppingCartGrid :form-dialog:h"/>
+                                     update="shoppingCartGrid :form-dialog:totalPrice"/>
                 </p:column>
 
 
@@ -130,7 +130,8 @@
 
             <p:commandButton oncomplete="PF('orderDialog').show()"
                              styleClass="mt-3"
-                             value="Bestellen"/>
+                             value="Bestellen" update="form-dialog:orderDialog"
+                             actionListener="#{shoppingCartService.createUserAddresses()}"/>
         </h:form>
 
         <h:form id="form-dialog">
@@ -139,20 +140,19 @@
                       responsive="true" resizable="false" width="800" height="500" closable="true" id="orderDialog">
 
                 <div class="form-group pt-2">
-                    <label for="h">Summe</label>
+                    <label for="totalPrice">Summe</label>
                     <h:outputText value="#{shoppingCartService.totalPrice}" type="text"
                                   name="reptileName"
-                                  class="form-control placeholder-wave" id="h"/>
+                                  class="form-control placeholder-wave" id="totalPrice"/>
                 </div>
 
                 <div class="form-group pt-2 list-group-horizontal row">
                     <div class="col-sm">
                         <label for="select1">Lieferadresse</label>
                         <h:selectOneMenu value="#{shoppingCartService.selectedAddress}" class="form-control"
-                                         id="select1"
-                                         name="select1">
+                                         id="select1">
                             <f:selectItem itemLabel="Adresse bitte auswählen" itemValue=""/>
-                            <f:selectItems value="#{shoppingCartService.userAddresses()}" var="g" itemValue="#{g}"
+                            <f:selectItems value="#{shoppingCartService.userAddresses}" var="g" itemValue="#{g}"
                                            itemLabel="#{g}"/>
                             <f:ajax listener="#{shoppingCartService.saveBillingAddress}"
                                     render="billingName billingPhoneNumber"/>
@@ -162,10 +162,9 @@
 
                         <label for="select2">Rechnungsadresse</label>
                         <h:selectOneMenu value="#{shoppingCartService.selectedAddress}" class="form-control"
-                                         id="select2"
-                                         name="select2">
+                                         id="select2">
                             <f:selectItem itemLabel="Adresse bitte auswählen" itemValue=""/>
-                            <f:selectItems value="#{shoppingCartService.userAddresses()}" var="g" itemValue="#{g}"
+                            <f:selectItems value="#{shoppingCartService.userAddresses}" var="g" itemValue="#{g}"
                                            itemLabel="#{g}"/>
                             <f:ajax listener="#{shoppingCartService.saveDeliveryAddress}"
                                     render="deliveryName deliveryPhoneNumber"/>
@@ -178,13 +177,11 @@
                     <div class=" col-sm form-group pt-2">
                         <label for="billingName">Name</label>
                         <h:outputText value="#{shoppingCartService.order.billingAddress.fullName}" type="text"
-                                      name="billingName"
                                       class="form-control placeholder-wave" id="billingName"/>
                     </div>
                     <div class=" col-sm form-group pt-2">
                         <label for="deliveryName">Name</label>
                         <h:outputText value="#{shoppingCartService.order.deliveryAddress.fullName}" type="text"
-                                      name="deliveryName"
                                       class="form-control placeholder-wave" id="deliveryName"/>
                     </div>
                 </div>
@@ -193,25 +190,23 @@
                     <div class=" col-sm form-group pt-2">
                         <label for="billingPhoneNumber">Telefonnummer</label>
                         <h:outputText value="#{shoppingCartService.order.billingAddress.phoneNumber}" type="text"
-                                      name="billingPhoneNumber"
                                       class="form-control placeholder-wave" id="billingPhoneNumber"/>
                     </div>
                     <div class=" col-sm form-group pt-2">
                         <label for="deliveryPhoneNumber">Telefonnummer</label>
                         <h:outputText value="#{shoppingCartService.order.deliveryAddress.phoneNumber}" type="text"
-                                      name="deliveryPhoneNumber"
                                       class="form-control placeholder-wave" id="deliveryPhoneNumber"/>
                     </div>
                 </div>
 
                 <div class="form-group pt-2">
                     <label for="orderComment">Bestellkommentar</label>
-                    <p:inputTextarea value="#{shoppingCartService.order.orderComment}" type="text" name="reptileName"
+                    <p:inputTextarea value="#{shoppingCartService.order.orderComment}" type="text"
                                      class="form-control placeholder-wave" id="orderComment" disabled="false"/>
                 </div>
 
                 <p:commandButton styleClass="mt-4" action="#{shoppingCartService.completeOrderingProcess()}"
-                                 value="Bestellen" update="orderDialog form-grid"/>
+                                 value="Bestellen" update="form-dialog form-grid" process="@this"/>
             </p:dialog>
         </h:form>
     </div>
