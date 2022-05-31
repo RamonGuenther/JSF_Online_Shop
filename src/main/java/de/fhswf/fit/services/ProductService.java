@@ -16,15 +16,17 @@ import java.util.stream.Collectors;
 public class ProductService implements Serializable {
 
     private Product product;
-
     private Product selectedProduct;
-
     private List<Product> productList;
     private transient ProductStore productStore;
+
+    private String amount;
+    private List<Integer> inStockAmountList;
 
     public ProductService() {
         product = new Product();
         productList = new ArrayList<>();
+        inStockAmountList = new ArrayList<>();
     }
 
     private void init(){
@@ -37,6 +39,21 @@ public class ProductService implements Serializable {
         this.productStore = productStore;
         init();
     }
+
+    public void refreshProducts(){
+        System.out.println("Refresh Products");
+        productList = productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).collect(Collectors.toList());
+    }
+
+    private void generateAmountNumbers() {
+        inStockAmountList = new ArrayList<>();
+        int i = 0;
+        while (i < selectedProduct.getInStock()) {
+            inStockAmountList.add(i + 1);
+            i++;
+        }
+    }
+
 
     public Product getProduct() {
         return product;
@@ -66,8 +83,20 @@ public class ProductService implements Serializable {
         this.productList = productList;
     }
 
-    public void refreshProducts(){
-        System.out.println("Refresh");
-        productList = productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).collect(Collectors.toList());
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public List<Integer> getInStockAmountList() {
+        generateAmountNumbers();
+        return inStockAmountList;
+    }
+
+    public void setInStockAmountList(List<Integer> inStockAmountList) {
+        this.inStockAmountList = inStockAmountList;
     }
 }

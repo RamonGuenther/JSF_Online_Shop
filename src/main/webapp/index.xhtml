@@ -99,46 +99,58 @@
             <p:dialog header="Produkt - Details" showEffect="fade" widgetVar="productDialog"
                       responsive="true" resizable="false" width="800" height="680" closable="true">
                 <p:outputPanel id="productDetails">
-                    <h2>#{productService.selectedProduct.name}</h2>
+                    <p:outputPanel rendered="#{not empty productService.selectedProduct}">
+                        <h2>#{productService.selectedProduct.name}</h2>
 
-                    <p:graphicImage styleClass="border border-1 border-dark p-2"
-                                    url="images/#{productService.selectedProduct.firstImage}" width="220"
-                                    height="300"/>
+                        <p:graphicImage styleClass="border border-1 border-dark p-2"
+                                        url="images/#{productService.selectedProduct.firstImage}" width="220"
+                                        height="300"/>
 
-                    <div class="form-group pt-2 list-group-horizontal row">
-                        <div class="col-sm">
-                            <label for="price">Preis</label>
-                            <h:outputText value="#{productService.selectedProduct.price}€" type="text"
-                                          class="form-control placeholder-wave" id="price"/>
+                        <div class="form-group pt-2 list-group-horizontal row">
+                            <div class="col-sm">
+                                <label for="price">Preis</label>
+                                <h:outputText value="#{productService.selectedProduct.price}€"
+                                              class="form-control placeholder-wave" id="price"/>
 
+                            </div>
+                            <div class="col-sm">
+                                <label for="inStock">Auf Lager</label>
+                                <h:outputText value="#{productService.selectedProduct.inStock}"
+                                              class="form-control placeholder-wave" id="inStock"/>
+                            </div>
                         </div>
-                        <div class="col-sm">
-                            <label for="inStock">Auf Lager</label>
-                            <h:outputText value="#{productService.selectedProduct.inStock}" type="text"
-                                          class="form-control placeholder-wave" id="inStock"/>
+
+                        <div class="form-group pt-2">
+                            <label for="description">Beschreibung</label>
+                            <h:outputText value="#{productService.selectedProduct.description}"
+                                          name="description"
+                                          class="form-control placeholder-wave" id="description"/>
                         </div>
-                    </div>
 
-                    <div class="form-group pt-2">
-                        <label for="description">Beschreibung</label>
-                        <h:outputText value="#{productService.selectedProduct.description}" type="text"
-                                      name="description"
-                                      class="form-control placeholder-wave" id="description"/>
-                    </div>
+                        <h:outputLabel value="Bestellmenge" for="selectAMount"/>
+                        <h:selectOneMenu value="#{productService.amount}" class="form-control placeholder-wave"
+                                         id="selectAMount" style="width:230px">
+                            <f:selectItem itemLabel="Bitte die Menge auswählen"/>
+                            <f:selectItems value="#{productService.inStockAmountList}" var="g"
+                                           itemValue="#{g}"
+                                           itemLabel="#{g}"/>
+                        </h:selectOneMenu>
 
-                    <div class="form-group pt-2">
-                        <ui:repeat value="#{productService.selectedProduct.categoryList}" var="category">
-                            <p:badge value="#{category.categoryType.label}" styleClass="m-lg-2"/>
-                        </ui:repeat>
-                    </div>
+                        <div class="form-group pt-2">
+                            <ui:repeat value="#{productService.selectedProduct.categoryList}" var="category">
+                                <p:badge value="#{category.categoryType.label}" styleClass="m-lg-2"/>
+                            </ui:repeat>
+                        </div>
+                    </p:outputPanel>
                 </p:outputPanel>
 
                 <f:facet name="footer">
                     <p:commandButton styleClass="mt-3" value="In den Warenkorb"
                                      update="productDetails form-grid form-dialog">
 
-                        <f:actionListener binding="#{shoppingCartService.addToShoppingCart(productService.selectedProduct)}"/>
+                        <f:actionListener binding="#{shoppingCartService.addToShoppingCart(productService.selectedProduct, productService.amount)}"/>
                         <f:actionListener binding="#{productService.refreshProducts()}"/>
+                        <f:actionListener binding="#{productService.setAmount(null)}"/>
                     </p:commandButton>
                 </f:facet>
 

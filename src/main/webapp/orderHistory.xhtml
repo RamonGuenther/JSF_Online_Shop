@@ -43,6 +43,140 @@
     </nav>
     <div class="container">
 
+        <h:form id="form">
+            <h2 class="text-white mt-5 mb-4">Bestellhistorie</h2>
+
+            <p:dataTable value="#{orderHistoryService.orderingList}" var="order" paginator="true" rows="10"
+                         paginatorPosition="bottom" widgetVar="orderGrid" reflow="true" editable="true"
+                         id="addressGrid">
+
+                <p:column headerText="Rechnungsadresse">
+                    <h:outputText value="#{order.billingAddress.fullAddress}"/>
+                </p:column>
+
+                <p:column headerText="Lieferadresse" width="320">
+                    <h:outputText value="#{order.deliveryAddress.fullAddress}"/>
+                </p:column>
+
+
+                <p:column headerText="Gesamtpreis" filterStyle="display:none" width="300">
+                    <h:outputText value="#{order.totalPrice}€"/>
+                </p:column>
+
+
+                <p:column headerText="Details">
+                    <p:commandButton update=":form"
+                                     icon="pi pi-search"
+                                     oncomplete="PF('orderDetailsDialog').show()"
+                                     styleClass="edit-button rounded-button ui-button-primar">
+                        <f:setPropertyActionListener value="#{order}"
+                                                     target="#{orderHistoryService.selectedOrdering}"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <p:dialog header="Bestelldetails" showEffect="fade" widgetVar="orderDetailsDialog"
+                      responsive="true" resizable="false" width="1500" height="800" closable="true" id="orderDialog">
+
+                <p:divider styleClass="mt-3" />
+
+                <h2 class="mt-3 mb-3"> Bestellte Produkte </h2>
+                <p:dataTable value="#{orderHistoryService.selectedOrdering.orderedProductList}" var="op" paginator="true" rows="3"
+                             paginatorPosition="bottom" widgetVar="shoppingCartGrid" reflow="true" editable="true"
+                             id="shoppingCartGrid">
+
+                    <p:column headerText="Name" sortBy="#{op.product.name}" filterBy="#{op.product.name}"
+                              filterStyle="display:none" width="250">
+                        <h:outputText value="#{op.product.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Produktbild" exportable="false" width="200">
+                        <p:graphicImage url="images/#{op.product.firstImage}" title="#{op.product.firstImage}"
+                                        width="75"
+                                        height="100"/>
+                    </p:column>
+
+                    <p:column headerText="Einzelpreis" sortBy="#{op.product.price}" width="200">
+                        <h:outputText value="#{op.product.price}€"/>
+                    </p:column>
+
+
+                    <p:column headerText="Bestellmenge" width="200">
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{op.amount}"/></f:facet>
+                            <f:facet name="input">
+                                <h:selectOneMenu value="#{op.amount}" style="width:100%">
+                                    <f:selectItems value="#{shoppingCartService.generateAmountNumbers(op)}" var="g"
+                                                   itemValue="#{g}"
+                                                   itemLabel="#{g}"/>
+                                </h:selectOneMenu>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column headerText="Gesamtpreis" sortBy="#{op.product.price}" width="200">
+                        <h:outputText value="#{op.product.price*op.amount}€"/>
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <h:outputText id="footer"
+                                      value="Anzahl: #{orderHistoryService.selectedOrdering.orderedProductList.size()}
+                                      | Gesamtpreis: #{orderHistoryService.selectedOrdering.totalPrice}€"
+                                      class="p-text-bold"/>
+                    </f:facet>
+                </p:dataTable>
+
+                <p:divider styleClass="mt-5" />
+
+
+                <h2 class="mt-3 mb-3"> Lieferdetails </h2>
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class="col-sm">
+                        <label for="deliveryAddress">Lieferadresse</label>
+                        <h:outputText id="deliveryAddress" value="#{orderHistoryService.selectedOrdering.deliveryAddress.fullAddress}"
+                                      class="form-control placeholder-wave" />
+                    </div>
+                    <div class="col-sm">
+                        <label for="billingAddress">Rechnungsadresse</label>
+                        <h:outputText id="billingAddress" value="#{orderHistoryService.selectedOrdering.billingAddress.fullAddress}"
+                                      class="form-control placeholder-wave" />
+                    </div>
+                </div>
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class=" col-sm form-group pt-2">
+                        <label for="billingName">Name</label>
+                        <h:outputText value="#{orderHistoryService.selectedOrdering.billingAddress.fullName}"
+                                      class="form-control placeholder-wave" id="billingName"/>
+                    </div>
+                    <div class=" col-sm form-group pt-2">
+                        <label for="deliveryName">Name</label>
+                        <h:outputText value="#{orderHistoryService.selectedOrdering.deliveryAddress.fullName}"
+                                      class="form-control placeholder-wave" id="deliveryName"/>
+                    </div>
+                </div>
+
+                <div class="form-group pt-2 list-group-horizontal row">
+                    <div class=" col-sm form-group pt-2">
+                        <label for="billingPhoneNumber">Telefonnummer</label>
+                        <h:outputText value="#{orderHistoryService.selectedOrdering.billingAddress.phoneNumber}"
+                                      class="form-control placeholder-wave" id="billingPhoneNumber"/>
+                    </div>
+                    <div class=" col-sm form-group pt-2">
+                        <label for="deliveryPhoneNumber">Telefonnummer</label>
+                        <h:outputText value="#{orderHistoryService.selectedOrdering.deliveryAddress.phoneNumber}"
+                                      class="form-control placeholder-wave" id="deliveryPhoneNumber"/>
+                    </div>
+                </div>
+
+                <div class="form-group pt-2">
+                    <label for="orderComment">Bestellkommentar</label>
+                    <h:outputText value="#{orderHistoryService.selectedOrdering.orderComment}"
+                                  class="form-control placeholder-wave" id="orderComment" disabled="false"/>
+                </div>
+            </p:dialog>
+        </h:form>
     </div>
 </h:body>
 </html>

@@ -11,7 +11,6 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.primefaces.PrimeFaces;
 import org.primefaces.event.RowEditEvent;
 
 import java.io.Serializable;
@@ -22,25 +21,15 @@ import java.util.List;
 @Named("shoppingCartService")
 public class ShoppingCartService implements Serializable {
 
-    private Ordering order;
-
-    private List<OrderedProduct> orderedProductList;
-
     private transient OrderStore orderStore;
-
     private transient UserStore userStore;
-
     private transient ProductStore productStore;
-
     private transient OrderedProductStore orderedProductStore;
-
-    private double totalPrice;
-
-    private int tmp;
-
+    private Ordering order;
+    private List<OrderedProduct> orderedProductList;
+    private int productAmountBefore;
     private String selectedAddress;
     private List<String> userAddresses;
-
 
     public ShoppingCartService() {
         orderedProductList = new ArrayList<>();
@@ -65,49 +54,23 @@ public class ShoppingCartService implements Serializable {
         init();
     }
 
-    public Ordering getOrder() {
-        return order;
-    }
 
-    public List<OrderedProduct> getOrderedProductList() {
-        return orderedProductList;
-    }
-
-    public void setOrder(Ordering order) {
-        this.order = order;
-    }
-
-    public void setOrderedProductList(List<OrderedProduct> orderedProductList) {
-        this.orderedProductList = orderedProductList;
-    }
-
-    public void addToShoppingCart(Product product) {
+    public void addToShoppingCart(Product product, int amount) {
+        if(amount == 0){
+            amount = 1;
+        }
 
         System.out.println("Aufruf");
 
-        product.setInStock(product.getInStock() - 1);
+        product.setInStock(product.getInStock() - amount);
         productStore.update(product);
 
-        order.addOrderedProduct(new OrderedProduct(order, product, 1));
+        order.addOrderedProduct(new OrderedProduct(order, product, amount), amount);
 
         orderStore.update(order);
 
         orderedProductList = order.getOrderedProductList();
 
-    }
-
-    public double getTotalPrice() {
-        refreshTotalPrice();
-        return totalPrice;
-    }
-
-    public void refreshTotalPrice() {
-        System.out.println("refreshTotal");
-        totalPrice = 0.0;
-        for (OrderedProduct op : order.getOrderedProductList()) {
-            totalPrice += op.getProduct().getPrice() * op.getAmount();
-        }
-        totalPrice = totalPrice * 100 / 100; //Aus Gründen
     }
 
     public void onRowEdit(RowEditEvent<OrderedProduct> event) {
@@ -117,8 +80,11 @@ public class ShoppingCartService implements Serializable {
 
         OrderedProduct editOP = event.getObject();
 
-        editOP.getProduct().setInStock(editOP.getProduct().getInStock() + tmp - editOP.getAmount());
-        productStore.update(editOP.getProduct());
+        Product product = productStore.getById(editOP.getProduct().getId());
+
+        product.setInStock(product.getInStock() + productAmountBefore - editOP.getAmount());
+
+        productStore.update(product);
 
         order.editOrderedProduct(editOP);
         orderStore.update(order);
@@ -130,36 +96,22 @@ public class ShoppingCartService implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public int[] generateAmountNumbers(OrderedProduct op) {
-        tmp = op.getAmount(); //Für Später in onRowEdit
-        int[] result = new int[op.getProduct().getInStock() + op.getAmount()];
+    /**
+     * Methode um die verfügbare Produktanzahl zu ermitteln, damit der Nutzer im Warenkorb die Menge anpassen kann
+     */
+    public List<Integer> generateAmountNumbers(OrderedProduct op) {
+        productAmountBefore = op.getAmount(); //Für Später in onRowEdit
+        Product product = productStore.getById(op.getProduct().getId());
+
+        List<Integer> result = new ArrayList<>();
         int i = 0;
-        while (i < op.getProduct().getInStock() + op.getAmount()) {
-            result[i] = i + 1;
+        while (i < product.getInStock() + op.getAmount()) {
+            result.add(i + 1);
             i++;
         }
         return result;
     }
 
-
-    public void deleteProduct(OrderedProduct orderedProduct) {
-        System.out.println("DELETE");
-
-        orderedProduct.getProduct().setInStock(orderedProduct.getProduct().getInStock() + orderedProduct.getAmount());
-        productStore.update(orderedProduct.getProduct());
-
-        order.removeOrderedProduct(orderedProduct);
-        orderStore.update(order);
-
-        orderedProductStore.delete(orderedProduct);
-
-        orderedProductList = order.getOrderedProductList();
-    }
-
-
-    public List<String> getUserAddresses() {
-        return userAddresses;
-    }
 
     public void createUserAddresses(){
         Benutzer currentUser = userStore.getById(1L);
@@ -169,6 +121,23 @@ public class ShoppingCartService implements Serializable {
         }
         System.out.println(userAddresses.size());
     }
+
+    public void deleteProduct(OrderedProduct orderedProduct) {
+        System.out.println("DELETE");
+
+        Product product = productStore.getById(orderedProduct.getProduct().getId());
+        product.setInStock(product.getInStock() + orderedProduct.getAmount());
+
+        productStore.update(product);
+
+        order.removeOrderedProduct(orderedProduct);
+        orderStore.update(order);
+
+        orderedProductStore.delete(orderedProduct);
+
+        orderedProductList = order.getOrderedProductList();
+    }
+
 
     public void saveBillingAddress(AjaxBehaviorEvent event) {
         Benutzer currentUser = userStore.getById(1L);
@@ -194,14 +163,9 @@ public class ShoppingCartService implements Serializable {
 
     }
 
-    public String getSelectedAddress() {
-        return selectedAddress;
-    }
-
-    public void setSelectedAddress(String selectedAddress) {
-        this.selectedAddress = selectedAddress;
-    }
-
+    /**
+     * Methode um den Bestellvorgang abzuschließen
+     */
     public void completeOrderingProcess() {
         Benutzer currentUser = userStore.getById(1L);
 
@@ -219,4 +183,32 @@ public class ShoppingCartService implements Serializable {
         orderedProductList = order.getOrderedProductList();
         selectedAddress = "";
     }
+
+    public Ordering getOrder() {
+        return order;
+    }
+
+    public List<OrderedProduct> getOrderedProductList() {
+        return orderedProductList;
+    }
+
+    public void setOrder(Ordering order) {
+        this.order = order;
+    }
+
+    public void setOrderedProductList(List<OrderedProduct> orderedProductList) {
+        this.orderedProductList = orderedProductList;
+    }
+    public String getSelectedAddress() {
+        return selectedAddress;
+    }
+
+    public void setSelectedAddress(String selectedAddress) {
+        this.selectedAddress = selectedAddress;
+    }
+
+    public List<String> getUserAddresses() {
+        return userAddresses;
+    }
+
 }

@@ -16,8 +16,6 @@ import java.util.List;
 @PersistenceUnit
 @Stateless
 public class UserStore implements Serializable {
-
-
     @PersistenceContext
     private EntityManager entityManager;
 

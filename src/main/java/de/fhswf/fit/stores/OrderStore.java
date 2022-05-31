@@ -18,12 +18,9 @@ public class OrderStore implements Serializable {
     public void save(Ordering newOrdering){
         entityManager.persist(newOrdering);
     }
-
-
     public void update(Ordering ordering){
         entityManager.merge(ordering);
     }
-
     public void delete(Ordering ordering) {
         ordering = entityManager.merge(ordering);
         entityManager.remove(ordering);

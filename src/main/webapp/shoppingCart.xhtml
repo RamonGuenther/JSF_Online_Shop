@@ -68,7 +68,7 @@
 
                 <p:ajax event="rowEdit" listener="#{shoppingCartService.onRowEdit}"
                         update=":form-grid:msgs :form-dialog:totalPrice"
-                        oncomplete="refreshFooter();"/> <!-- ruft remoteCommand auf könnte es auch apfel nennen -> apfel();-->
+                        oncomplete="refreshFooter(); "/> <!-- ruft remoteCommand auf könnte diese Komponente auch apfel nennen -> apfel();-->
 
                 <p:ajax event="rowEditCancel" listener="#{shoppingCartService.onRowCancel}"
                         update=":form-grid:msgs"/>
@@ -107,7 +107,10 @@
                 </p:column>
 
                 <p:column headerText="Bearbeiten" style="width:6rem">
-                    <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
+                    <p:rowEditor editTitle="Menge bearbeiten" cancelTitle="Bearbeitung abbrechen"
+                                 saveTitle="Bearbeitung Speichern">
+                        <p:ajaxStatus oncomplete="#{productService.refreshProducts()}"/> <!-- Um die Menge auf der Produktview zu aktualisieren -->
+                    </p:rowEditor>
                 </p:column>
 
 
@@ -121,7 +124,7 @@
 
                 <f:facet name="footer">
                     <h:outputText id="footer"
-                                  value="Anzahl: #{shoppingCartService.orderedProductList.size()} | Gesamtpreis: #{shoppingCartService.totalPrice}€"
+                                  value="Anzahl Artikeltypen: #{shoppingCartService.orderedProductList.size()} | Gesamtpreis: #{shoppingCartService.order.totalPrice}€"
                                   class="p-text-bold"/>
                 </f:facet>
 
@@ -141,7 +144,7 @@
 
                 <div class="form-group pt-2">
                     <label for="totalPrice">Summe</label>
-                    <h:outputText value="#{shoppingCartService.totalPrice}" type="text"
+                    <h:outputText value="#{shoppingCartService.order.totalPrice}€" type="text"
                                   name="reptileName"
                                   class="form-control placeholder-wave" id="totalPrice"/>
                 </div>
@@ -201,11 +204,12 @@
 
                 <div class="form-group pt-2">
                     <label for="orderComment">Bestellkommentar</label>
-                    <p:inputTextarea value="#{shoppingCartService.order.orderComment}" type="text"
-                                     class="form-control placeholder-wave" id="orderComment" disabled="false"/>
+                    <p:inputTextarea value="#{shoppingCartService.order.orderComment}"
+                                     class="form-control placeholder-wave" id="orderComment"/>
                 </div>
 
-                <p:commandButton styleClass="mt-4" action="#{shoppingCartService.completeOrderingProcess()}"
+                <p:commandButton styleClass="mt-4" actionListener="#{shoppingCartService.completeOrderingProcess()}"
+                                 action="#{orderHistoryService.refreshOrderingList()}"
                                  value="Bestellen" update="form-dialog form-grid" process="@this"/>
             </p:dialog>
         </h:form>

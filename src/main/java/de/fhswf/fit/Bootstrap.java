@@ -11,8 +11,8 @@ import jakarta.inject.Inject;
 
 /**
  * TODO:
- *       - Bestellhistorie View
- *       - Bestellmenge ändern aktualisert sich nicht auf der Produktübersicht erst nach update durch den Dialog!
+ *       - OpenId Connect?
+ *       - Adresse löschen? Wegen FK schwierig
  *       - Bilder speichern / mehrere Bilder bei Detailansicht zum scrollen oder so
  */
 @Startup
@@ -217,7 +217,7 @@ public class Bootstrap {
         benutzer.addAddress(address2);
         userStore.update(benutzer);
 
-        System.out.println("Testuser wurden in der Datenbank gespeichert");
+        System.out.println("Testuser wurde in der Datenbank gespeichert");
 
         Ordering order1 = new Ordering();
 
@@ -226,43 +226,12 @@ public class Bootstrap {
 
         OrderedProduct op = new OrderedProduct(order1, smartphone1, 1);
 
-        order1.addOrderedProduct(op);
-
-        order1.addOrderedProduct(new OrderedProduct(order1, smartphone1, 1));
-
-//        order1.addOrderedProduct(new OrderedProduct(order1, smartphone2,1));
-
-//        order1.setOrderStateToOrder();
-//
-//        order1.addOrderedProduct( new OrderedProduct(order1, tv,1));
-//
-//        order1.addOrderedProduct(new OrderedProduct(order1, pc2,1));
-
+        order1.addOrderedProduct(op,1);
 
         orderStore.update(order1);
-
-        System.out.println(benutzer.getOrderingList().get(0).getOrderedProductList().size());
-        System.out.println(order1.getOrderedProductList().size());
 
         order1.removeOrderedProduct(op);
         orderedProductStore.delete(op);
-
         orderStore.update(order1);
-
-
-//        //Ein leerer "Warenkorb"
-//        Orders order2 = new Orders();
-//        ordersService.saveOrder(order1);
-//        ordersService.saveOrder(order2);
-//
-//        System.out.println("Beispielbestellung angelegt");
-//
-//        user.addOrder(order1);
-//        user.addOrder(order2);
-//        userService.saveUser(user);
-//
-//        System.out.println("Testuser Bestellung zugeordnet und User aktualisiert");
-
-
     }
 }

@@ -47,27 +47,11 @@ public class AddressService implements Serializable {
         init();
     }
 
-    public List<Address> getAddressList() {
-        return addressList;
-    }
-
-    public void setAddressList(List<Address> addressList) {
-        this.addressList = addressList;
-    }
-
     public void deleteAddress(Address address) {
         currentUser.removeAddress(address);
         userStore.update(currentUser);
         addressList = currentUser.getAddressList();
         addressStore.delete(address);
-    }
-
-    public Address getSelectedAddress() {
-        return selectedAddress;
-    }
-
-    public void setSelectedAddress(Address selectedAddress) {
-        this.selectedAddress = selectedAddress;
     }
 
     public void updateAddress(Address address) {
@@ -86,8 +70,21 @@ public class AddressService implements Serializable {
     public Address getAddress() {
         return address;
     }
-
+    public List<Address> getAddressList() {
+        return addressList;
+    }
+    public Address getSelectedAddress() {
+        return selectedAddress;
+    }
+    public void setSelectedAddress(Address selectedAddress) {
+        this.selectedAddress = selectedAddress;
+    }
     public void setAddress(Address address) {
         this.address = address;
     }
+    public void setAddressList(List<Address> addressList) {
+        this.addressList = addressList;
+    }
+
+
 }

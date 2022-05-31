@@ -84,12 +84,12 @@ public class Ordering implements Serializable {
         return orderState;
     }
 
-    public void addOrderedProduct(OrderedProduct orderedProduct) {
+    public void addOrderedProduct(OrderedProduct orderedProduct, int amount) {
 
         for (OrderedProduct op : orderedProductList) {
             if (op.getProduct().equals(orderedProduct.getProduct())) {
                 System.out.println("Gibt es schon");
-                op.setAmount(op.getAmount() + 1);
+                op.setAmount(op.getAmount() + amount);
                 return;
             }
         }
@@ -118,5 +118,14 @@ public class Ordering implements Serializable {
 
     public void setOrderStateToOrder() {
         orderState = OrderState.BESTELLT;
+    }
+
+    public double getTotalPrice(){
+        double totalPrice = 0.0;
+        for (OrderedProduct op : orderedProductList) {
+            totalPrice += op.getProduct().getPrice() * op.getAmount();
+        }
+        totalPrice = totalPrice * 100 / 100; //Aus Gründen
+        return  totalPrice;
     }
 }
