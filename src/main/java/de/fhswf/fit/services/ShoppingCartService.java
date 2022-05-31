@@ -38,6 +38,7 @@ public class ShoppingCartService implements Serializable {
     }
 
     private void init() {
+        System.out.println("Initialisierung ShoppingCartService");
         Benutzer currentUser = userStore.getById(1L);
         order = currentUser.getOrderingList().get(currentUser.getOrderingList().size() - 1);
         orderedProductList = order.getOrderedProductList();
@@ -46,7 +47,6 @@ public class ShoppingCartService implements Serializable {
 
     @Inject
     public void setOrderStore(OrderStore orderStore, UserStore userStore, ProductStore productStore, OrderedProductStore orderedProductStore) {
-        System.out.println("init");
         this.orderStore = orderStore;
         this.userStore = userStore;
         this.productStore = productStore;
@@ -60,8 +60,6 @@ public class ShoppingCartService implements Serializable {
             amount = 1;
         }
 
-        System.out.println("Aufruf");
-
         product.setInStock(product.getInStock() - amount);
         productStore.update(product);
 
@@ -74,7 +72,7 @@ public class ShoppingCartService implements Serializable {
     }
 
     public void onRowEdit(RowEditEvent<OrderedProduct> event) {
-        System.out.println("ONROWEDIT");
+        System.out.println("OnRowEdit");
         FacesMessage msg = new FacesMessage("Product Edited", String.valueOf(event.getObject().getProduct().getName()));
         FacesContext.getCurrentInstance().addMessage(null, msg);
 
@@ -92,6 +90,7 @@ public class ShoppingCartService implements Serializable {
     }
 
     public void onRowCancel(RowEditEvent<OrderedProduct> event) {
+        System.out.println("OnRowCancel");
         FacesMessage msg = new FacesMessage("Edit Cancelled", String.valueOf(event.getObject().getProduct().getName()));
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }

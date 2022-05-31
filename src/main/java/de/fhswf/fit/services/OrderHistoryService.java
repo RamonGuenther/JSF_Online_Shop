@@ -29,14 +29,14 @@ public class OrderHistoryService implements Serializable {
         selectedOrdering = new Ordering();
     }
 
-    private void init(){
+    private void init() {
+        System.out.println("Initialisierung OrderHistoryService");
         Benutzer currentUser = userStore.getById(1L);
-        orderingList = currentUser.getOrderingList().stream().filter(e-> e.getOrderState().equals(OrderState.BESTELLT)).collect(Collectors.toList());
+        orderingList = currentUser.getOrderingList().stream().filter(e -> e.getOrderState().equals(OrderState.BESTELLT)).collect(Collectors.toList());
     }
 
     @Inject
-    public void setUserStore(UserStore userStore){
-        System.out.println("Initialisierung OrderHistoryService");
+    public void setUserStore(UserStore userStore) {
         this.userStore = userStore;
         init();
     }
@@ -57,8 +57,8 @@ public class OrderHistoryService implements Serializable {
         this.selectedOrdering = selectedOrdering;
     }
 
-    public void refreshOrderingList(){
+    public void refreshOrderingList() {
         Benutzer currentUser = userStore.getById(1L);
-        orderingList = currentUser.getOrderingList().stream().filter(e-> e.getOrderState().equals(OrderState.BESTELLT)).collect(Collectors.toList());
+        orderingList = currentUser.getOrderingList().stream().filter(e -> e.getOrderState().equals(OrderState.BESTELLT)).collect(Collectors.toList());
     }
 }

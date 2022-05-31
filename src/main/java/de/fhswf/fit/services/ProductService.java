@@ -30,6 +30,7 @@ public class ProductService implements Serializable {
     }
 
     private void init(){
+        System.out.println("Initialisierung ProductService");
         productList.addAll(productStore.getAll().stream().filter(filter -> filter.getInStock() >= 1).collect(Collectors.toList()));
     }
 
@@ -53,7 +54,6 @@ public class ProductService implements Serializable {
             i++;
         }
     }
-
 
     public Product getProduct() {
         return product;

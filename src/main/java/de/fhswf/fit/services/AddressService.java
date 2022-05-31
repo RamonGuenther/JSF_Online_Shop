@@ -35,13 +35,13 @@ public class AddressService implements Serializable {
     }
 
     private void init() {
+        System.out.println("Initialisierung AddressService");
         currentUser = userStore.getAll().get(0);
         addressList = currentUser.getAddressList();
     }
 
     @Inject
     public void setStores(UserStore userStore, AddressStore addressStore) {
-        System.out.println("Initialisierung des AddressServices");
         this.userStore = userStore;
         this.addressStore = addressStore;
         init();
@@ -70,18 +70,23 @@ public class AddressService implements Serializable {
     public Address getAddress() {
         return address;
     }
+
     public List<Address> getAddressList() {
         return addressList;
     }
+
     public Address getSelectedAddress() {
         return selectedAddress;
     }
+
     public void setSelectedAddress(Address selectedAddress) {
         this.selectedAddress = selectedAddress;
     }
+
     public void setAddress(Address address) {
         this.address = address;
     }
+
     public void setAddressList(List<Address> addressList) {
         this.addressList = addressList;
     }

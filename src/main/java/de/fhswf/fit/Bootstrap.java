@@ -11,8 +11,7 @@ import jakarta.inject.Inject;
 
 /**
  * TODO:
- *       - OpenId Connect?
- *       - Adresse löschen? Wegen FK schwierig
+ *       - Adresse löschen? Wegen FK schwierig weil sonst theoretisch ja auch die Order mit gelöscht werden müsste?
  *       - Bilder speichern / mehrere Bilder bei Detailansicht zum scrollen oder so
  */
 @Startup
@@ -21,16 +20,12 @@ public class Bootstrap {
 
     @Inject
     private ProductStore productStore;
-
     @Inject
     private CategoryStore categoryStore;
-
     @Inject
     private UserStore userStore;
-
     @Inject
     private OrderStore orderStore;
-
     @Inject
     private OrderedProductStore orderedProductStore;
 
